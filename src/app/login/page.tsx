@@ -39,11 +39,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f6] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md space-y-8 bg-white p-10 rounded-3xl shadow-sm border border-[#e2e2e2]"
+        className="w-full max-w-md space-y-8 glass p-10 rounded-3xl"
       >
         <div className="text-center space-y-2">
           <motion.div
@@ -51,19 +51,19 @@ export default function LoginPage() {
             transition={{ repeat: Infinity, duration: 3 }}
             className="flex justify-center"
           >
-            <Heart className="text-[#ff9a9e] fill-[#ff9a9e]" size={48} />
+            <Heart stroke="url(#aurora-gradient)" size={48} />
           </motion.div>
-          <h1 className="text-2xl font-serif text-[#4a4a4a]">Our Private Space</h1>
-          <p className="text-[#8e8e8e] text-sm">Enter the secret code to enter</p>
+          <h1 className="text-2xl font-sans text-white">Our Private Space</h1>
+          <p className="text-slate-400 text-sm">Enter the secret code to enter</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8e8e8e]" size={18} />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
             <Input
               type="password"
               placeholder="Secret Code"
-              className="pl-10 h-12 bg-[#fdfdfd] border-[#e2e2e2] rounded-xl focus:ring-[#ff9a9e] focus:border-[#ff9a9e]"
+              className="pl-10 h-12 bg-slate-900 border-slate-800 rounded-xl focus:ring-green-500 focus:border-green-500 text-white"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               required
@@ -71,7 +71,7 @@ export default function LoginPage() {
           </div>
           <Button 
             type="submit" 
-            className="w-full h-12 bg-[#ff9a9e] hover:bg-[#ff8a8e] text-white rounded-xl transition-all"
+            className="w-full h-12 bg-white text-black hover:bg-slate-200 rounded-xl transition-all font-medium border-none"
             disabled={loading}
           >
             {loading ? 'Entering...' : 'Enter'}
@@ -79,7 +79,7 @@ export default function LoginPage() {
         </form>
 
         <div className="text-center pt-4">
-          <p className="text-[#c4c4c4] text-xs font-serif tracking-widest uppercase italic">
+          <p className="text-slate-600 text-xs font-sans tracking-widest uppercase">
             Forever & Always
           </p>
         </div>

@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { VisualEditsMessenger } from "orchids-visual-edits";
 import { LenisProvider } from "@/components/LenisProvider";
 
+import { AuroraGradient } from "@/components/AuroraGradient";
+
 const fredoka = Fredoka({
   subsets: ["latin"],
   variable: "--font-fredoka",
@@ -23,9 +25,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${fredoka.variable} antialiased min-h-screen font-sans`}>
-        <LenisProvider>
+      <html lang="en">
+        <body className={`${fredoka.variable} antialiased min-h-screen font-sans`}>
+          <AuroraGradient />
+          <LenisProvider>
           <main className="pb-24">
             {children}
           </main>

@@ -156,23 +156,23 @@ export default function OursPage() {
   return (
     <div className="min-h-screen pt-12 px-4 pb-32 bg-black">
       <div className="max-w-4xl mx-auto space-y-12">
-        <header className="flex flex-col items-center space-y-4">
-          <motion.div 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            onClick={handleAdminToggle}
-            className="w-12 h-12 glass rounded-full flex items-center justify-center text-purple-400 cursor-pointer hover:scale-105 transition-transform"
-          >
-            <ImageIcon size={24} />
-          </motion.div>
-          <h1 className="text-3xl font-serif text-white italic">Shared Memories</h1>
-        </header>
+          <header className="flex flex-col items-center space-y-4">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              onClick={handleAdminToggle}
+              className="w-12 h-12 glass rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition-transform shadow-[0_0_20px_rgba(20,232,24,0.3)]"
+            >
+              <ImageIcon stroke="url(#aurora-gradient)" size={24} />
+            </motion.div>
+            <h1 className="text-3xl font-sans text-white">Shared Memories</h1>
+          </header>
 
-        <Dialog open={showAdminDialog} onOpenChange={setShowAdminDialog}>
-          <DialogContent className="rounded-3xl border-slate-800 bg-slate-950 sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="font-serif italic text-xl text-white">Admin Access</DialogTitle>
-            </DialogHeader>
+          <Dialog open={showAdminDialog} onOpenChange={setShowAdminDialog}>
+            <DialogContent className="rounded-3xl border-slate-800 bg-slate-950 sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="font-sans text-xl text-white">Admin Access</DialogTitle>
+              </DialogHeader>
             <div className="space-y-4 pt-4">
               <div className="space-y-2">
                 <label className="text-xs uppercase tracking-widest text-slate-500">Admin Code</label>
@@ -185,52 +185,128 @@ export default function OursPage() {
                   className="rounded-xl border-slate-800 bg-slate-900 text-white"
                 />
               </div>
-              <Button 
-                className="w-full h-12 bg-purple-600 hover:bg-purple-500 rounded-xl shadow-md text-white font-medium border-none"
-                onClick={handleAdminVerify}
-                disabled={isVerifying || !adminCodeInput}
-              >
-                {isVerifying ? <Loader fullScreen={false} size={24} /> : 'Enable Admin Mode'}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+                <Button 
+                  className="w-full h-12 bg-white text-black hover:bg-slate-200 rounded-xl shadow-md font-medium border-none"
+                  onClick={handleAdminVerify}
+                  disabled={isVerifying || !adminCodeInput}
+                >
+                  {isVerifying ? <Loader fullScreen={false} size={24} /> : 'Enable Admin Mode'}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {isAdmin && (
+            <div className="flex justify-center flex-col items-center space-y-4">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="rounded-full bg-white text-black hover:bg-slate-200 shadow-lg px-8 h-12 border-none group">
+                    <Plus stroke="url(#aurora-gradient)" className="mr-2" size={18} /> Add Memory
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="rounded-3xl border-slate-800 bg-slate-950 text-white">
+                  <DialogHeader>
+                    <DialogTitle className="font-sans text-xl">Capture a Memory</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-6 pt-4">
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-widest text-slate-500">Photo</label>
+                      <div className="border-2 border-dashed border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center space-y-4 hover:border-green-500 transition-colors cursor-pointer relative overflow-hidden">
+                        <Input 
+                          type="file" 
+                          className="absolute inset-0 opacity-0 cursor-pointer" 
+                          onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                          accept="image/*"
+                        />
+                        {selectedFile ? (
+                          <div className="text-center">
+                            <ImageIcon stroke="url(#aurora-gradient)" className="mx-auto mb-2" size={32} />
+                            <p className="text-sm text-slate-300 truncate max-w-[200px]">{selectedFile.name}</p>
+                          </div>
+                        ) : (
+                          <div className="text-center">
+                            <Upload className="mx-auto text-slate-600 mb-2" size={32} />
+                            <p className="text-sm text-slate-600">Click or drag to upload</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-widest text-slate-500">Month</label>
+                        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                          <SelectTrigger className="rounded-xl border-slate-800 bg-slate-900">
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-xl border-slate-800 bg-slate-950 text-white">
+                            {months.map(m => (
+                              <SelectItem key={m} value={m}>{m}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-widest text-slate-500">Year</label>
+                        <Select value={selectedYear} onValueChange={setSelectedYear}>
+                          <SelectTrigger className="rounded-xl border-slate-800 bg-slate-900">
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-xl border-slate-800 bg-slate-950 text-white">
+                            {[2020, 2021, 2022, 2023, 2024, 2025].map(y => (
+                              <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <Button 
+                      className="w-full h-12 bg-white text-black hover:bg-slate-200 rounded-xl shadow-md font-medium border-none"
+                      onClick={handleUpload}
+                      disabled={uploading || !selectedFile}
+                    >
+                      {uploading ? <Loader fullScreen={false} size={24} /> : 'Save Memory'}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
 
         {isAdmin && (
           <div className="flex justify-center flex-col items-center space-y-4">
             <Dialog>
-              <DialogTrigger asChild>
-                <Button className="rounded-full bg-purple-600 hover:bg-purple-500 shadow-lg px-8 h-12 border-none">
-                  <Plus className="mr-2" size={18} /> Add Memory
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="rounded-3xl border-slate-800 bg-slate-950 text-white">
-                <DialogHeader>
-                  <DialogTitle className="font-serif italic text-xl">Capture a Memory</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-6 pt-4">
-                  <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-widest text-slate-500">Photo</label>
-                    <div className="border-2 border-dashed border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center space-y-4 hover:border-purple-500 transition-colors cursor-pointer relative overflow-hidden">
-                      <Input 
-                        type="file" 
-                        className="absolute inset-0 opacity-0 cursor-pointer" 
-                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                        accept="image/*"
-                      />
-                      {selectedFile ? (
-                        <div className="text-center">
-                          <ImageIcon className="mx-auto text-purple-400 mb-2" size={32} />
-                          <p className="text-sm text-slate-300 truncate max-w-[200px]">{selectedFile.name}</p>
-                        </div>
-                      ) : (
-                        <div className="text-center">
-                          <Upload className="mx-auto text-slate-600 mb-2" size={32} />
-                          <p className="text-sm text-slate-600">Click or drag to upload</p>
-                        </div>
-                      )}
+                <DialogTrigger asChild>
+                  <Button className="rounded-full bg-white text-black hover:bg-slate-200 shadow-lg px-8 h-12 border-none group">
+                    <Plus stroke="url(#aurora-gradient)" className="mr-2" size={18} /> Add Memory
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="rounded-3xl border-slate-800 bg-slate-950 text-white">
+                  <DialogHeader>
+                    <DialogTitle className="font-sans text-xl">Capture a Memory</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-6 pt-4">
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-widest text-slate-500">Photo</label>
+                      <div className="border-2 border-dashed border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center space-y-4 hover:border-green-500 transition-colors cursor-pointer relative overflow-hidden">
+                        <Input 
+                          type="file" 
+                          className="absolute inset-0 opacity-0 cursor-pointer" 
+                          onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                          accept="image/*"
+                        />
+                        {selectedFile ? (
+                          <div className="text-center">
+                            <ImageIcon stroke="url(#aurora-gradient)" className="mx-auto mb-2" size={32} />
+                            <p className="text-sm text-slate-300 truncate max-w-[200px]">{selectedFile.name}</p>
+                          </div>
+                        ) : (
+                          <div className="text-center">
+                            <Upload className="mx-auto text-slate-600 mb-2" size={32} />
+                            <p className="text-sm text-slate-600">Click or drag to upload</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -291,18 +367,18 @@ export default function OursPage() {
             <div className="flex justify-center pt-20">
               <Loader fullScreen={false} size={48} />
             </div>
-          ) : photos.length === 0 ? (
-             <div className="text-center py-20 space-y-4">
-                <ImageIcon className="mx-auto text-slate-800" size={64} />
-                <p className="text-slate-500 font-serif italic">No memories captured yet...</p>
-             </div>
-          ) : (
-            groupKeys.map((key) => (
-              <section key={key} className="space-y-6">
-                <div className="flex items-center space-x-4">
-                  <h2 className="text-xl font-serif text-white italic whitespace-nowrap">{key}</h2>
-                  <div className="h-[1px] w-full bg-slate-800" />
-                </div>
+            ) : photos.length === 0 ? (
+               <div className="text-center py-20 space-y-4">
+                  <ImageIcon stroke="url(#aurora-gradient)" className="mx-auto" size={64} />
+                  <p className="text-slate-500 font-sans">No memories captured yet...</p>
+               </div>
+            ) : (
+              groupKeys.map((key) => (
+                <section key={key} className="space-y-6">
+                  <div className="flex items-center space-x-4">
+                    <h2 className="text-xl font-sans text-white whitespace-nowrap">{key}</h2>
+                    <div className="h-[1px] w-full bg-slate-800" />
+                  </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {groupedPhotos[key].map((photo, idx) => (
                     <motion.div
@@ -319,22 +395,22 @@ export default function OursPage() {
                         alt="Memory" 
                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
-                         <Maximize2 className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={24} />
-                      </div>
-                      
-                      {isAdmin && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(photo);
-                          }}
-                          className="absolute top-3 right-3 p-2 bg-black/60 hover:bg-red-900/60 text-white rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                          disabled={deleting === photo.id}
-                        >
-                          {deleting === photo.id ? <Loader fullScreen={false} size={16} /> : <Trash2 size={16} />}
-                        </button>
-                      )}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
+                           <Maximize2 stroke="url(#aurora-gradient)" className="opacity-0 group-hover:opacity-100 transition-opacity" size={24} />
+                        </div>
+                        
+                        {isAdmin && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(photo);
+                            }}
+                            className="absolute top-3 right-3 p-2 bg-black/60 hover:bg-red-900/60 text-white rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                            disabled={deleting === photo.id}
+                          >
+                            {deleting === photo.id ? <Loader fullScreen={false} size={16} /> : <Trash2 stroke="url(#aurora-gradient)" size={16} />}
+                          </button>
+                        )}
                     </motion.div>
                   ))}
                 </div>
