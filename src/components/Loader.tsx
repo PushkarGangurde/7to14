@@ -1,13 +1,25 @@
-export function Loader() {
+'use client';
+
+interface LoaderProps {
+  fullScreen?: boolean;
+  size?: number;
+}
+
+export function Loader({ fullScreen = true, size = 56 }: LoaderProps) {
+  const containerClasses = fullScreen 
+    ? "loader-container" 
+    : "flex items-center justify-center p-4 w-full h-full";
+
   return (
-    <div className="loader-container">
+    <div className={containerClasses}>
       <svg
         aria-label="loader being flipped clockwise and circled by three white curves fading in and out"
         role="img"
-        height="56px"
-        width="56px"
+        height={`${size}px`}
+        width={`${size}px`}
         viewBox="0 0 56 56"
         className="loader"
+        style={{ width: fullScreen ? '14em' : `${size}px` }}
       >
         <clipPath id="sand-mound-top">
           <path

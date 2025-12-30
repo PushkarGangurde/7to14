@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Image as ImageIcon, X, Upload, Loader2, Trash2, Maximize2 } from 'lucide-react';
+import { Plus, Image as ImageIcon, X, Upload, Trash2, Maximize2 } from 'lucide-react';
+import { Loader } from '@/components/Loader';
 import { getPhotos, uploadPhoto, uploadToStorage, deletePhoto } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import {
@@ -189,7 +190,7 @@ export default function OursPage() {
                 onClick={handleAdminVerify}
                 disabled={isVerifying || !adminCodeInput}
               >
-                {isVerifying ? <Loader2 className="animate-spin" /> : 'Enable Admin Mode'}
+                {isVerifying ? <Loader fullScreen={false} size={24} /> : 'Enable Admin Mode'}
               </Button>
             </div>
           </DialogContent>
@@ -265,7 +266,7 @@ export default function OursPage() {
                     onClick={handleUpload}
                     disabled={uploading || !selectedFile}
                   >
-                    {uploading ? <Loader2 className="animate-spin" /> : 'Save Memory'}
+                    {uploading ? <Loader fullScreen={false} size={24} /> : 'Save Memory'}
                   </Button>
                 </div>
               </DialogContent>
@@ -288,7 +289,7 @@ export default function OursPage() {
         <div className="space-y-16">
           {loading ? (
             <div className="flex justify-center pt-20">
-              <Loader2 className="animate-spin text-[#ff9a9e]" size={32} />
+              <Loader fullScreen={false} size={48} />
             </div>
           ) : photos.length === 0 ? (
              <div className="text-center py-20 space-y-4">
@@ -331,7 +332,7 @@ export default function OursPage() {
                           className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-red-50 text-red-500 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
                           disabled={deleting === photo.id}
                         >
-                          {deleting === photo.id ? <Loader2 className="animate-spin" size={16} /> : <Trash2 size={16} />}
+                          {deleting === photo.id ? <Loader fullScreen={false} size={16} /> : <Trash2 size={16} />}
                         </button>
                       )}
                     </motion.div>

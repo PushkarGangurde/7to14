@@ -90,7 +90,7 @@ nextjs-portal {
   --dur: 2s;
   display: block;
   margin: auto;
-  width: 8em;
+  width: 14em;
   height: auto;
 }
 .loader__glare-top,
@@ -161,6 +161,13 @@ nextjs-portal {
   transform-origin: 12.25px 31.5px;
 }
 
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: hsl(var(--hue), 90%, 10%);
+    --fg: hsl(var(--hue), 90%, 90%);
+  }
+}
 /* Animation */
 @keyframes loader-flip {
   from {
