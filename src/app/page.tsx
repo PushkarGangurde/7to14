@@ -55,7 +55,7 @@ export default function HomePage() {
       {/* New Aurora Hero Background */}
       <div className="absolute inset-0 z-0 opacity-60">
         <Aurora
-          colorStops={["#3A29FF", "#A855F7", "#22C55E"]}
+          colorStops={["#14e818", "#017ed5", "#b53dff"]}
           blend={0.5}
           amplitude={1.2}
           speed={0.4}
@@ -77,14 +77,14 @@ export default function HomePage() {
             className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-4"
           >
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
             </span>
-            <span className="text-[10px] uppercase tracking-[0.3em] text-purple-300 font-medium">Est. Jan 2020</span>
+            <span className="text-[10px] uppercase tracking-[0.3em] text-green-300 font-medium">Est. Jan 2020</span>
           </motion.div>
           
-          <h1 className="text-6xl md:text-8xl font-serif text-white tracking-tighter italic">
-            <span className="block text-slate-400 text-2xl md:text-3xl not-italic tracking-[0.2em] font-sans uppercase mb-2 opacity-50">Introducing</span>
+          <h1 className="text-6xl md:text-8xl font-sans text-white tracking-tighter">
+            <span className="block text-slate-400 text-2xl md:text-3xl tracking-[0.2em] uppercase mb-2 opacity-50">Introducing</span>
             7to14
           </h1>
           
@@ -103,9 +103,9 @@ export default function HomePage() {
               transition={{ delay: 0.4 + index * 0.1 }}
               className="relative group"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-purple-500/20 to-transparent blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-b from-green-500/20 to-transparent blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative bg-white/5 border border-white/10 backdrop-blur-xl p-4 rounded-2xl flex flex-col items-center justify-center transition-all group-hover:bg-white/10 group-hover:-translate-y-1">
-                <span className="text-3xl font-serif text-white">{unit.value ?? 0}</span>
+                <span className="text-3xl font-sans text-white">{unit.value ?? 0}</span>
                 <span className="text-[9px] uppercase tracking-[0.2em] text-slate-500 mt-1">{unit.label}</span>
               </div>
             </motion.div>

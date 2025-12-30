@@ -1,12 +1,19 @@
 import type { Metadata } from "next";
+import { Fredoka } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { VisualEditsMessenger } from "orchids-visual-edits";
 import { LenisProvider } from "@/components/LenisProvider";
 
+const fredoka = Fredoka({
+  subsets: ["latin"],
+  variable: "--font-fredoka",
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
-  title: "Our Space | Pushkar & Tanu",
+  title: "7to14 | Our Journey",
   description: "A private digital space for our memories.",
 };
 
@@ -17,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen">
+      <body className={`${fredoka.variable} antialiased min-h-screen font-sans`}>
         <LenisProvider>
           <main className="pb-24">
             {children}

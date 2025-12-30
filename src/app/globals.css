@@ -1,19 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&display=swap');
-
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @theme inline {
-  --font-sans: 'Inter', sans-serif;
-  --font-serif: 'Playfair Display', serif;
+  --font-sans: var(--font-fredoka), system-ui, sans-serif;
+  --font-serif: var(--font-fredoka), system-ui, sans-serif;
   
   --color-background: #000000;
   --color-foreground: #f8fafc;
   
-  --color-primary: #a855f7;
-  --color-primary-foreground: #ffffff;
+  --color-primary: #14e818;
+  --color-primary-foreground: #000000;
   
-  --color-accent: #3b82f6;
+  --color-accent: #b53dff;
   --color-accent-foreground: #ffffff;
   
   --color-border: var(--border);
@@ -32,19 +30,19 @@
   --card-foreground: #f8fafc;
   --popover: #0a0a0a;
   --popover-foreground: #f8fafc;
-  --primary: #a855f7;
-  --primary-foreground: #ffffff;
+  --primary: #14e818;
+  --primary-foreground: #000000;
   --secondary: #1a1a1a;
   --secondary-foreground: #f8fafc;
   --muted: #1a1a1a;
   --muted-foreground: #94a3b8;
-  --accent: #3b82f6;
+  --accent: #b53dff;
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --border: #262626;
   --input: #262626;
-  --ring: #a855f7;
+  --ring: #14e818;
   --radius: 1.25rem;
 }
 
@@ -54,12 +52,12 @@
     outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased selection:bg-purple-500/30;
-    background-image: radial-gradient(rgba(168, 85, 247, 0.1) 1px, transparent 1px);
+    @apply bg-background text-foreground font-sans antialiased selection:bg-green-500/30;
+    background-image: radial-gradient(rgba(20, 232, 24, 0.05) 1px, transparent 1px);
     background-size: 40px 40px;
   }
   h1, h2, h3, h4, h5, h6, .font-serif {
-    @apply font-serif;
+    @apply font-sans;
   }
 }
 
@@ -68,7 +66,7 @@
 }
 
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#a855f7] via-[#3b82f6] to-[#22c55e];
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#14e818] via-[#017ed5] to-[#b53dff];
 }
 
 /* Hide Next.js error overlay portal */
@@ -78,7 +76,7 @@ nextjs-portal {
 
 /* Loader Styles */
 .loader-container {
-  --hue: 280; /* Aurora Purple */
+  --hue: 140; /* Aurora Green */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -204,7 +202,7 @@ nextjs-portal {
   }
   20% {
     animation-timing-function: cubic-bezier(0.33, 1, 0.67, 1);
-    stroke: rgb(168, 85, 247);
+    stroke: #14e818;
     stroke-dashoffset: 141.11;
     transform: rotate(1turn);
   }
@@ -225,7 +223,7 @@ nextjs-portal {
   }
   20% {
     animation-timing-function: cubic-bezier(0.33, 1, 0.67, 1);
-    stroke: rgb(59, 130, 246);
+    stroke: #017ed5;
     stroke-dashoffset: 147.53;
     transform: rotate(0.83turn);
   }
@@ -246,7 +244,7 @@ nextjs-portal {
   }
   24% {
     animation-timing-function: cubic-bezier(0.33, 1, 0.67, 1);
-    stroke: rgb(34, 197, 94);
+    stroke: #b53dff;
     stroke-dashoffset: 134.7;
     transform: rotate(0.67turn);
   }
