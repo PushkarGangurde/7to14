@@ -15,7 +15,7 @@ const JOURNEY_DATA = [
     image: '/journey/2.jpg',
     title: 'Growing Together',
     description: 'Finding comfort in each other\'s presence, building dreams one day at a time.',
-    year: '2021'
+    year: ''
   },
   {
     image: '/journey/3.jpg',
@@ -64,7 +64,37 @@ const JOURNEY_DATA = [
       title: 'Same Attitude',
       description: 'And I think we have same attitude level after fight 🤐',
       year: '2025'
-    }
+    },
+    {
+    image: '/journey/11.jpg',
+    title: 'The Beginning',
+    description: 'Where our story first sparked into life. Every moment since has been a treasure.',
+    year: '2020'
+    },
+    {
+    image: '/journey/12.jpg',
+    title: 'The Beginning',
+    description: 'Where our story first sparked into life. Every moment since has been a treasure.',
+    year: '2020'
+    },
+    {
+    image: '/journey/13.jpg',
+    title: 'The Beginning',
+    description: 'Where our story first sparked into life. Every moment since has been a treasure.',
+    year: '2020'
+    },
+    {
+    image: '/journey/14.jpg',
+    title: 'The Beginning',
+    description: 'Where our story first sparked into life. Every moment since has been a treasure.',
+    year: '2020'
+    },
+    {
+    image: '/journey/15.jpg',
+    title: 'The Beginning',
+    description: 'Where our story first sparked into life. Every moment since has been a treasure.',
+    year: '2020'
+    },
 ];
 
 function JourneyItem({ item, index }: { item: typeof JOURNEY_DATA[0], index: number }) {

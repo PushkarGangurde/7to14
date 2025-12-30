@@ -19,9 +19,9 @@ export default function HomePage() {
   const { scrollYProgress } = useScroll();
   
   // Hero animations based on scroll
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.1], [1, 0.9]);
-  const heroY = useTransform(scrollYProgress, [0, 0.1], [0, -50]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
+  const heroY = useTransform(scrollYProgress, [0, 0.2], [0, -100]);
 
   useEffect(() => {
     const updateCounter = () => {
@@ -63,14 +63,17 @@ export default function HomePage() {
       {/* Hero Section */}
       <div className="relative min-h-screen flex flex-col items-center justify-center p-6 pt-32 pb-12 overflow-hidden">
         {/* New Aurora Hero Background */}
-        <div className="absolute inset-0 z-0 opacity-60">
+        <motion.div 
+          style={{ opacity: heroOpacity }}
+          className="absolute inset-0 z-0 opacity-60"
+        >
           <Aurora
             colorStops={["#14e818", "#017ed5", "#b53dff"]}
             blend={0.5}
             amplitude={1.2}
             speed={0.4}
           />
-        </div>
+        </motion.div>
 
         <motion.div 
           style={{ opacity: heroOpacity, scale: heroScale, y: heroY }}
@@ -126,14 +129,33 @@ export default function HomePage() {
               ))}
             </div>
           </div>
+        </motion.div>
+      </div>
 
-          {/* CTA Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.8 }}
-            className="flex flex-col items-center space-y-6"
-          >
+      {/* Journey Section */}
+      <JourneySection />
+
+      {/* Final CTA Section */}
+      <section className="relative py-32 px-6 flex flex-col items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-green-500/5 to-transparent" />
+        
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          viewport={{ once: true }}
+          className="relative z-10 flex flex-col items-center space-y-12 text-center"
+        >
+          <div className="space-y-4">
+            <h2 className="text-4xl md:text-6xl font-sans text-white tracking-tighter">
+              Ready to revisit our moments?
+            </h2>
+            <p className="text-slate-400 max-w-md mx-auto">
+              Every photo tells a story of us. Explore the complete collection in our digital archive.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center space-y-6">
             <Link href="/ours">
               <Button size="xl" className="rounded-full bg-white text-black hover:bg-slate-200 border-none shadow-[0_0_30px_rgba(255,255,255,0.2)] px-12 h-16 text-lg font-medium group">
                 Explore Memories
@@ -152,12 +174,9 @@ export default function HomePage() {
                  <span>Always</span>
               </div>
             </div>
-          </motion.div>
+          </div>
         </motion.div>
-      </div>
-
-      {/* Journey Section */}
-      <JourneySection />
+      </section>
     </div>
   );
 }
