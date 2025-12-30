@@ -25,22 +25,22 @@ export function Navbar() {
           const isActive = pathname === item.href;
           const Icon = item.icon;
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "relative flex flex-col items-center p-2 rounded-xl transition-all duration-300",
-                isActive ? "text-purple-400" : "text-slate-500 hover:text-purple-400"
-              )}
-            >
-              {isActive && (
-                <motion.div
-                  layoutId="nav-active"
-                  className="absolute inset-0 bg-purple-500/10 rounded-xl"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                />
-              )}
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "relative flex flex-col items-center p-2 rounded-xl transition-all duration-300",
+                  isActive ? "text-primary" : "text-slate-500 hover:text-primary"
+                )}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="nav-active"
+                    className="absolute inset-0 bg-primary/10 rounded-xl"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
               <Icon size={20} className="mb-1" />
               <span className="text-[10px] font-medium uppercase tracking-wider">{item.label}</span>
             </Link>

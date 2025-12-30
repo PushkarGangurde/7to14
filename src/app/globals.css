@@ -8,11 +8,11 @@
   --color-background: #000000;
   --color-foreground: #f8fafc;
   
-  --color-primary: #14e818;
-  --color-primary-foreground: #000000;
+  --color-primary: #b53dff;
+  --color-primary-foreground: #ffffff;
   
-  --color-accent: #b53dff;
-  --color-accent-foreground: #ffffff;
+  --color-accent: #14e818;
+  --color-accent-foreground: #000000;
   
   --color-border: var(--border);
   --color-input: var(--input);
@@ -30,19 +30,19 @@
   --card-foreground: #f8fafc;
   --popover: #0a0a0a;
   --popover-foreground: #f8fafc;
-  --primary: #14e818;
-  --primary-foreground: #000000;
+  --primary: #b53dff;
+  --primary-foreground: #ffffff;
   --secondary: #1a1a1a;
   --secondary-foreground: #f8fafc;
   --muted: #1a1a1a;
   --muted-foreground: #94a3b8;
-  --accent: #b53dff;
-  --accent-foreground: #ffffff;
+  --accent: #14e818;
+  --accent-foreground: #000000;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --border: #262626;
   --input: #262626;
-  --ring: #14e818;
+  --ring: #b53dff;
   --radius: 1.25rem;
 }
 
@@ -52,8 +52,8 @@
     outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased selection:bg-green-500/30;
-    background-image: radial-gradient(rgba(20, 232, 24, 0.05) 1px, transparent 1px);
+    @apply bg-background text-foreground font-sans antialiased selection:bg-purple-500/30;
+    background-image: radial-gradient(rgba(181, 61, 255, 0.05) 1px, transparent 1px);
     background-size: 40px 40px;
   }
   h1, h2, h3, h4, h5, h6, .font-serif {
@@ -66,7 +66,15 @@
 }
 
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#14e818] via-[#017ed5] to-[#b53dff];
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#14e818] via-[#017ed5] via-[#b53dff] via-[#ff3d3d] to-[#14e818];
+  background-size: 200% auto;
+  animation: text-gradient 8s linear infinite;
+}
+
+@keyframes text-gradient {
+  to {
+    background-position: 200% center;
+  }
 }
 
 /* Hide Next.js error overlay portal */
@@ -76,7 +84,6 @@ nextjs-portal {
 
 /* Loader Styles */
 .loader-container {
-  --hue: 140; /* Aurora Green */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -157,12 +164,6 @@ nextjs-portal {
 .loader__sand-mound-bottom {
   animation-name: sand-mound-bottom;
   transform-origin: 12.25px 31.5px;
-}
-
-/* Dark theme overrides for loader */
-:root {
-  --bg: #000;
-  --fg: #fff;
 }
 
 /* Animation */
