@@ -7,14 +7,14 @@
   --font-sans: 'Inter', sans-serif;
   --font-serif: 'Playfair Display', serif;
   
-  --color-background: #faf9f6;
-  --color-foreground: #4a4a4a;
+  --color-background: #000000;
+  --color-foreground: #f8fafc;
   
-  --color-primary: #ff9a9e;
+  --color-primary: #a855f7;
   --color-primary-foreground: #ffffff;
   
-  --color-accent: #fbc2eb;
-  --color-accent-foreground: #4a4a4a;
+  --color-accent: #3b82f6;
+  --color-accent-foreground: #ffffff;
   
   --color-border: var(--border);
   --color-input: var(--input);
@@ -26,25 +26,25 @@
 }
 
 :root {
-  --background: #faf9f6;
-  --foreground: #4a4a4a;
-  --card: #ffffff;
-  --card-foreground: #4a4a4a;
-  --popover: #ffffff;
-  --popover-foreground: #4a4a4a;
-  --primary: #ff9a9e;
+  --background: #000000;
+  --foreground: #f8fafc;
+  --card: #0a0a0a;
+  --card-foreground: #f8fafc;
+  --popover: #0a0a0a;
+  --popover-foreground: #f8fafc;
+  --primary: #a855f7;
   --primary-foreground: #ffffff;
-  --secondary: #fdfdfd;
-  --secondary-foreground: #4a4a4a;
-  --muted: #f5f5f5;
-  --muted-foreground: #8e8e8e;
-  --accent: #fbc2eb;
-  --accent-foreground: #4a4a4a;
-  --destructive: #ff4d4d;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #f8fafc;
+  --muted: #1a1a1a;
+  --muted-foreground: #94a3b8;
+  --accent: #3b82f6;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #e2e2e2;
-  --input: #e2e2e2;
-  --ring: #ff9a9e;
+  --border: #262626;
+  --input: #262626;
+  --ring: #a855f7;
   --radius: 1.25rem;
 }
 
@@ -54,8 +54,8 @@
     outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
-    background-image: radial-gradient(#ff9a9e10 1px, transparent 1px);
+    @apply bg-background text-foreground font-sans antialiased selection:bg-purple-500/30;
+    background-image: radial-gradient(rgba(168, 85, 247, 0.1) 1px, transparent 1px);
     background-size: 40px 40px;
   }
   h1, h2, h3, h4, h5, h6, .font-serif {
@@ -64,11 +64,11 @@
 }
 
 .glass {
-  @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
+  @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl;
 }
 
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#ff9a9e] to-[#fbc2eb];
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#a855f7] via-[#3b82f6] to-[#22c55e];
 }
 
 /* Hide Next.js error overlay portal */
@@ -78,7 +78,7 @@ nextjs-portal {
 
 /* Loader Styles */
 .loader-container {
-  --hue: 350; /* Match the pink theme */
+  --hue: 280; /* Aurora Purple */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -161,13 +161,12 @@ nextjs-portal {
   transform-origin: 12.25px 31.5px;
 }
 
-/* Dark theme */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: hsl(var(--hue), 90%, 10%);
-    --fg: hsl(var(--hue), 90%, 90%);
-  }
+/* Dark theme overrides for loader */
+:root {
+  --bg: #000;
+  --fg: #fff;
 }
+
 /* Animation */
 @keyframes loader-flip {
   from {
@@ -205,7 +204,7 @@ nextjs-portal {
   }
   20% {
     animation-timing-function: cubic-bezier(0.33, 1, 0.67, 1);
-    stroke: rgb(32, 32, 32);
+    stroke: rgb(168, 85, 247);
     stroke-dashoffset: 141.11;
     transform: rotate(1turn);
   }
@@ -226,7 +225,7 @@ nextjs-portal {
   }
   20% {
     animation-timing-function: cubic-bezier(0.33, 1, 0.67, 1);
-    stroke: white;
+    stroke: rgb(59, 130, 246);
     stroke-dashoffset: 147.53;
     transform: rotate(0.83turn);
   }
@@ -247,7 +246,7 @@ nextjs-portal {
   }
   24% {
     animation-timing-function: cubic-bezier(0.33, 1, 0.67, 1);
-    stroke: rgb(53, 53, 53);
+    stroke: rgb(34, 197, 94);
     stroke-dashoffset: 134.7;
     transform: rotate(0.67turn);
   }

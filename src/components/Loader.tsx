@@ -70,10 +70,10 @@ export function Loader({ fullScreen = true, size = 56 }: LoaderProps) {
           <g transform="translate(13.75,9.25)" className="loader__model">
             <path
               d="M 1.5 2 L 23 2 C 23 2 22.5 8.5 19 12 C 16 15.5 13.5 13.5 13.5 16.75 C 13.5 20 16 18 19 21.5 C 22.5 25 23 31.5 23 31.5 L 1.5 31.5 C 1.5 31.5 2 25 5.5 21.5 C 8.5 18 11 20 11 16.75 C 11 13.5 8.5 15.5 5.5 12 C 2 8.5 1.5 2 1.5 2 Z"
-              fill="hsl(var(--hue),90%,85%)"
+              fill="rgba(168, 85, 247, 0.2)"
             ></path>
 
-            <g strokeLinecap="round" stroke="hsl(35,90%,90%)">
+            <g strokeLinecap="round" stroke="rgba(168, 85, 247, 0.8)">
               <line
                 y2="20.75"
                 x2="12"
@@ -117,7 +117,7 @@ export function Loader({ fullScreen = true, size = 56 }: LoaderProps) {
                 x1="12"
                 strokeDasharray="1 107"
                 strokeWidth="1"
-                stroke="hsl(35,90%,83%)"
+                stroke="rgba(59, 130, 246, 0.6)"
                 className="loader__sand-line-left"
               ></line>
               <line
@@ -127,11 +127,11 @@ export function Loader({ fullScreen = true, size = 56 }: LoaderProps) {
                 x1="12.5"
                 strokeDasharray="12 96"
                 strokeWidth="1"
-                stroke="hsl(35,90%,83%)"
+                stroke="rgba(59, 130, 246, 0.6)"
                 className="loader__sand-line-right"
               ></line>
 
-              <g strokeWidth="0" fill="hsl(35,90%,90%)">
+              <g strokeWidth="0" fill="rgba(168, 85, 247, 0.8)">
                 <path
                   d="M 12.25 15 L 15.392 13.486 C 21.737 11.168 22.5 2 22.5 2 L 2 2.013 C 2 2.013 2.753 11.046 9.009 13.438 L 12.25 15 Z"
                   clipPath="url(#sand-mound-top)"
@@ -146,18 +146,18 @@ export function Loader({ fullScreen = true, size = 56 }: LoaderProps) {
             <g strokeWidth="2" strokeLinecap="round" opacity="0.7" fill="none">
               <path
                 d="M 19.437 3.421 C 19.437 3.421 19.671 6.454 17.914 8.846 C 16.157 11.238 14.5 11.5 14.5 11.5"
-                stroke="hsl(0,0%,100%)"
+                stroke="white"
                 className="loader__glare-top"
               ></path>
               <path
                 transform="rotate(180,12.25,16.75)"
                 d="M 19.437 3.421 C 19.437 3.421 19.671 6.454 17.914 8.846 C 16.157 11.238 14.5 11.5 14.5 11.5"
-                stroke="hsla(0,0%,100%,0)"
+                stroke="rgba(255, 255, 255, 0)"
                 className="loader__glare-bottom"
               ></path>
             </g>
 
-            <rect height="2" width="24.5" fill="hsl(var(--hue),90%,50%)"></rect>
+            <rect height="2" width="24.5" fill="rgb(168, 85, 247)"></rect>
             <rect
               height="1"
               width="19.5"
@@ -165,13 +165,13 @@ export function Loader({ fullScreen = true, size = 56 }: LoaderProps) {
               x="2.5"
               ry="0.5"
               rx="0.5"
-              fill="hsl(var(--hue),90%,57.5%)"
+              fill="rgb(192, 132, 252)"
             ></rect>
             <rect
               height="2"
               width="24.5"
               y="31.5"
-              fill="hsl(var(--hue),90%,50%)"
+              fill="rgb(168, 85, 247)"
             ></rect>
             <rect
               height="1"
@@ -180,7 +180,7 @@ export function Loader({ fullScreen = true, size = 56 }: LoaderProps) {
               x="2.5"
               ry="0.5"
               rx="0.5"
-              fill="hsl(var(--hue),90%,57.5%)"
+              fill="rgb(192, 132, 252)"
             ></rect>
           </g>
         </g>

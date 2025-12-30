@@ -154,39 +154,39 @@ export default function OursPage() {
   });
 
   return (
-    <div className="min-h-screen pt-12 px-4 pb-32">
+    <div className="min-h-screen pt-12 px-4 pb-32 bg-black">
       <div className="max-w-4xl mx-auto space-y-12">
         <header className="flex flex-col items-center space-y-4">
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             onClick={handleAdminToggle}
-            className="w-12 h-12 glass rounded-full flex items-center justify-center text-[#ff9a9e] cursor-pointer hover:scale-105 transition-transform"
+            className="w-12 h-12 glass rounded-full flex items-center justify-center text-purple-400 cursor-pointer hover:scale-105 transition-transform"
           >
             <ImageIcon size={24} />
           </motion.div>
-          <h1 className="text-3xl font-serif text-[#4a4a4a] italic">Shared Memories</h1>
+          <h1 className="text-3xl font-serif text-white italic">Shared Memories</h1>
         </header>
 
         <Dialog open={showAdminDialog} onOpenChange={setShowAdminDialog}>
-          <DialogContent className="rounded-3xl border-[#e2e2e2] bg-white sm:max-w-md">
+          <DialogContent className="rounded-3xl border-slate-800 bg-slate-950 sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="font-serif italic text-xl">Admin Access</DialogTitle>
+              <DialogTitle className="font-serif italic text-xl text-white">Admin Access</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-4">
               <div className="space-y-2">
-                <label className="text-xs uppercase tracking-widest text-[#8e8e8e]">Admin Code</label>
+                <label className="text-xs uppercase tracking-widest text-slate-500">Admin Code</label>
                 <Input 
                   type="password" 
                   placeholder="Enter secret code..."
                   value={adminCodeInput}
                   onChange={(e) => setAdminCodeInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleAdminVerify()}
-                  className="rounded-xl border-[#e2e2e2]"
+                  className="rounded-xl border-slate-800 bg-slate-900 text-white"
                 />
               </div>
               <Button 
-                className="w-full h-12 bg-[#ff9a9e] hover:bg-[#ff8a8e] rounded-xl shadow-md text-white font-medium"
+                className="w-full h-12 bg-purple-600 hover:bg-purple-500 rounded-xl shadow-md text-white font-medium border-none"
                 onClick={handleAdminVerify}
                 disabled={isVerifying || !adminCodeInput}
               >
@@ -200,18 +200,18 @@ export default function OursPage() {
           <div className="flex justify-center flex-col items-center space-y-4">
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="rounded-full bg-[#ff9a9e] hover:bg-[#ff8a8e] shadow-lg px-8 h-12">
+                <Button className="rounded-full bg-purple-600 hover:bg-purple-500 shadow-lg px-8 h-12 border-none">
                   <Plus className="mr-2" size={18} /> Add Memory
                 </Button>
               </DialogTrigger>
-              <DialogContent className="rounded-3xl border-[#e2e2e2] bg-white">
+              <DialogContent className="rounded-3xl border-slate-800 bg-slate-950 text-white">
                 <DialogHeader>
                   <DialogTitle className="font-serif italic text-xl">Capture a Memory</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6 pt-4">
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-widest text-[#8e8e8e]">Photo</label>
-                    <div className="border-2 border-dashed border-[#e2e2e2] rounded-2xl p-8 flex flex-col items-center justify-center space-y-4 hover:border-[#ff9a9e] transition-colors cursor-pointer relative overflow-hidden">
+                    <label className="text-xs uppercase tracking-widest text-slate-500">Photo</label>
+                    <div className="border-2 border-dashed border-slate-800 rounded-2xl p-8 flex flex-col items-center justify-center space-y-4 hover:border-purple-500 transition-colors cursor-pointer relative overflow-hidden">
                       <Input 
                         type="file" 
                         className="absolute inset-0 opacity-0 cursor-pointer" 
@@ -220,13 +220,13 @@ export default function OursPage() {
                       />
                       {selectedFile ? (
                         <div className="text-center">
-                          <ImageIcon className="mx-auto text-[#ff9a9e] mb-2" size={32} />
-                          <p className="text-sm text-[#4a4a4a] truncate max-w-[200px]">{selectedFile.name}</p>
+                          <ImageIcon className="mx-auto text-purple-400 mb-2" size={32} />
+                          <p className="text-sm text-slate-300 truncate max-w-[200px]">{selectedFile.name}</p>
                         </div>
                       ) : (
                         <div className="text-center">
-                          <Upload className="mx-auto text-[#8e8e8e] mb-2" size={32} />
-                          <p className="text-sm text-[#8e8e8e]">Click or drag to upload</p>
+                          <Upload className="mx-auto text-slate-600 mb-2" size={32} />
+                          <p className="text-sm text-slate-600">Click or drag to upload</p>
                         </div>
                       )}
                     </div>
@@ -234,12 +234,12 @@ export default function OursPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest text-[#8e8e8e]">Month</label>
+                      <label className="text-xs uppercase tracking-widest text-slate-500">Month</label>
                       <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                        <SelectTrigger className="rounded-xl border-[#e2e2e2]">
+                        <SelectTrigger className="rounded-xl border-slate-800 bg-slate-900">
                           <SelectValue placeholder="Month" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl border-[#e2e2e2]">
+                        <SelectContent className="rounded-xl border-slate-800 bg-slate-950 text-white">
                           {months.map(m => (
                             <SelectItem key={m} value={m}>{m}</SelectItem>
                           ))}
@@ -247,12 +247,12 @@ export default function OursPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest text-[#8e8e8e]">Year</label>
+                      <label className="text-xs uppercase tracking-widest text-slate-500">Year</label>
                       <Select value={selectedYear} onValueChange={setSelectedYear}>
-                        <SelectTrigger className="rounded-xl border-[#e2e2e2]">
+                        <SelectTrigger className="rounded-xl border-slate-800 bg-slate-900">
                           <SelectValue placeholder="Year" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl border-[#e2e2e2]">
+                        <SelectContent className="rounded-xl border-slate-800 bg-slate-950 text-white">
                           {[2020, 2021, 2022, 2023, 2024, 2025].map(y => (
                             <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
                           ))}
@@ -262,7 +262,7 @@ export default function OursPage() {
                   </div>
 
                   <Button 
-                    className="w-full h-12 bg-[#ff9a9e] hover:bg-[#ff8a8e] rounded-xl shadow-md text-white font-medium"
+                    className="w-full h-12 bg-purple-600 hover:bg-purple-500 rounded-xl shadow-md text-white font-medium border-none"
                     onClick={handleUpload}
                     disabled={uploading || !selectedFile}
                   >
@@ -274,7 +274,7 @@ export default function OursPage() {
             <Button 
               variant="ghost" 
               size="sm" 
-              className="text-[#8e8e8e] hover:text-red-400"
+              className="text-slate-500 hover:text-red-400"
               onClick={() => {
                 localStorage.removeItem('is_admin');
                 setIsAdmin(false);
@@ -293,15 +293,15 @@ export default function OursPage() {
             </div>
           ) : photos.length === 0 ? (
              <div className="text-center py-20 space-y-4">
-                <ImageIcon className="mx-auto text-[#e2e2e2]" size={64} />
-                <p className="text-[#8e8e8e] font-serif italic">No memories captured yet...</p>
+                <ImageIcon className="mx-auto text-slate-800" size={64} />
+                <p className="text-slate-500 font-serif italic">No memories captured yet...</p>
              </div>
           ) : (
             groupKeys.map((key) => (
               <section key={key} className="space-y-6">
                 <div className="flex items-center space-x-4">
-                  <h2 className="text-xl font-serif text-[#4a4a4a] italic whitespace-nowrap">{key}</h2>
-                  <div className="h-[1px] w-full bg-[#e2e2e2]" />
+                  <h2 className="text-xl font-serif text-white italic whitespace-nowrap">{key}</h2>
+                  <div className="h-[1px] w-full bg-slate-800" />
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {groupedPhotos[key].map((photo, idx) => (
@@ -319,7 +319,7 @@ export default function OursPage() {
                         alt="Memory" 
                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
                          <Maximize2 className="text-white opacity-0 group-hover:opacity-100 transition-opacity" size={24} />
                       </div>
                       
@@ -329,7 +329,7 @@ export default function OursPage() {
                             e.stopPropagation();
                             handleDelete(photo);
                           }}
-                          className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-red-50 text-red-500 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-3 right-3 p-2 bg-black/60 hover:bg-red-900/60 text-white rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
                           disabled={deleting === photo.id}
                         >
                           {deleting === photo.id ? <Loader fullScreen={false} size={16} /> : <Trash2 size={16} />}
@@ -350,7 +350,7 @@ export default function OursPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 md:p-8"
+            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 md:p-8"
             onClick={() => setSelectedPhoto(null)}
           >
             <button 

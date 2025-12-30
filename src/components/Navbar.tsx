@@ -29,16 +29,15 @@ export function Navbar() {
             <Link
               key={item.href}
               href={item.href}
-              target={item.external ? '_blank' : undefined}
               className={cn(
                 "relative flex flex-col items-center p-2 rounded-xl transition-all duration-300",
-                isActive ? "text-[#ff9a9e]" : "text-[#8e8e8e] hover:text-[#ff9a9e]"
+                isActive ? "text-purple-400" : "text-slate-500 hover:text-purple-400"
               )}
             >
               {isActive && (
                 <motion.div
                   layoutId="nav-active"
-                  className="absolute inset-0 bg-[#ff9a9e15] rounded-xl"
+                  className="absolute inset-0 bg-purple-500/10 rounded-xl"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}
