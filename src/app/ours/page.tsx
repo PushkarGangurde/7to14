@@ -41,6 +41,11 @@ export default function OursPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   
+  // Admin Dialog State
+  const [showAdminDialog, setShowAdminDialog] = useState(false);
+  const [adminCodeInput, setAdminCodeInput] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
+
   // Upload State
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -65,32 +70,38 @@ export default function OursPage() {
     }
   };
 
-  const handleAdminToggle = async () => {
-    // If already admin, we don't need to do anything
+  const handleAdminToggle = () => {
     if (isAdmin) {
       toast.info('You are already in admin mode');
       return;
     }
+    setShowAdminDialog(true);
+  };
 
-    const code = prompt('Enter Admin Code');
-    if (!code) return;
+  const handleAdminVerify = async () => {
+    if (!adminCodeInput) return;
+    setIsVerifying(true);
 
     try {
       const response = await fetch('/api/admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code: adminCodeInput }),
       });
 
       if (response.ok) {
         localStorage.setItem('is_admin', 'true');
         setIsAdmin(true);
+        setShowAdminDialog(false);
+        setAdminCodeInput('');
         toast.success('Admin mode enabled');
       } else {
         toast.error('Incorrect admin code');
       }
     } catch (error) {
       toast.error('Something went wrong');
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -155,6 +166,34 @@ export default function OursPage() {
           </motion.div>
           <h1 className="text-3xl font-serif text-[#4a4a4a] italic">Shared Memories</h1>
         </header>
+
+        <Dialog open={showAdminDialog} onOpenChange={setShowAdminDialog}>
+          <DialogContent className="rounded-3xl border-[#e2e2e2] bg-white sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="font-serif italic text-xl">Admin Access</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 pt-4">
+              <div className="space-y-2">
+                <label className="text-xs uppercase tracking-widest text-[#8e8e8e]">Admin Code</label>
+                <Input 
+                  type="password" 
+                  placeholder="Enter secret code..."
+                  value={adminCodeInput}
+                  onChange={(e) => setAdminCodeInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAdminVerify()}
+                  className="rounded-xl border-[#e2e2e2]"
+                />
+              </div>
+              <Button 
+                className="w-full h-12 bg-[#ff9a9e] hover:bg-[#ff8a8e] rounded-xl shadow-md text-white font-medium"
+                onClick={handleAdminVerify}
+                disabled={isVerifying || !adminCodeInput}
+              >
+                {isVerifying ? <Loader2 className="animate-spin" /> : 'Enable Admin Mode'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {isAdmin && (
           <div className="flex justify-center flex-col items-center space-y-4">
