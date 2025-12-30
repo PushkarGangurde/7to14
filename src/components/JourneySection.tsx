@@ -37,12 +37,15 @@ function JourneyItem({ item, index }: { item: typeof JOURNEY_DATA[0], index: num
   const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
-  return (
-    <motion.div
-      ref={ref}
-      style={{ opacity }}
-      className={`flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} items-center justify-between gap-12 py-24 md:py-32`}
-    >
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true, margin: "-100px" }}
+        className={`flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} items-center justify-between gap-12 py-24 md:py-32`}
+      >
       {/* Text Content */}
       <motion.div 
         initial={{ opacity: 0, x: isEven ? -50 : 50 }}
@@ -74,13 +77,14 @@ function JourneyItem({ item, index }: { item: typeof JOURNEY_DATA[0], index: num
         className="flex-1 w-full max-w-md"
       >
         <div className="relative aspect-square rounded-2xl overflow-hidden border border-white/10 group shadow-2xl shadow-green-500/5">
-          <Image
-            src={item.image}
-            alt={item.title}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
+            <Image
+              src={item.image}
+              alt={item.title}
+              fill
+              unoptimized
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           
           {/* Decorative Elements */}
