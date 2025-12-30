@@ -3,6 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { VisualEditsMessenger } from "orchids-visual-edits";
+import { LenisProvider } from "@/components/LenisProvider";
 
 export const metadata: Metadata = {
   title: "Our Space | Pushkar & Tanu",
@@ -17,12 +18,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased min-h-screen">
-        <main className="pb-24">
-          {children}
-        </main>
-        <Navbar />
-        <Toaster position="top-center" />
-        <VisualEditsMessenger />
+        <LenisProvider>
+          <main className="pb-24">
+            {children}
+          </main>
+          <Navbar />
+          <Toaster position="top-center" />
+          <VisualEditsMessenger />
+        </LenisProvider>
       </body>
     </html>
   );
