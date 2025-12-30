@@ -23,48 +23,48 @@ const JOURNEY_DATA = [
     description: 'A love that grows stronger with every passing season, bound by shared memories.',
     year: '2022'
   },
-  {
-    image: 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/12-1767133570388.jpg?width=8000&height=8000&resize=contain',
-    title: 'Cozy Moments',
-    description: "Here's all the kdrama and movie time ✨",
-    year: '2023'
-  },
-  {
-    image: 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/13-1767133570611.jpg?width=8000&height=8000&resize=contain',
-    title: 'Warm Hugs',
-    description: 'The safest place in the world is within your arms.',
-    year: '2023'
-  },
-  {
-    image: 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/5-1767133570454.jpg?width=8000&height=8000&resize=contain',
-    title: 'Heart to Heart',
-    description: 'Deep conversations and quiet moments that define our bond.',
-    year: '2024'
-  },
-  {
-    image: 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/6-1767133570396.jpg?width=8000&height=8000&resize=contain',
-    title: 'Small Rides',
-    description: 'Remember our small rides? Every journey with you is an adventure.',
-    year: '2024'
-  },
-  {
-    image: 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/7-1767133570390.jpg?width=8000&height=8000&resize=contain',
-    title: 'That Fragrance',
-    description: 'This one alsoo ..... that fragrance 🥰',
-    year: '2025'
-  },
-  {
-    image: 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/8-1767133570447.jpg?width=8000&height=8000&resize=contain',
-    title: 'Missing You',
-    description: 'I miss this one ☝🏻 Every moment apart only makes me love you more.',
-    year: '2025'
-  },
-  {
-    image: 'https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/document-uploads/9-1767133570496.jpg?width=8000&height=8000&resize=contain',
-    title: 'Same Attitude',
-    description: 'And I think we have same attitude level after fight 🤐',
-    year: '2025'
-  }
+    {
+      image: '/journey/4.jpg',
+      title: 'Cozy Moments',
+      description: "Here's all the kdrama and movie time ✨",
+      year: '2023'
+    },
+    {
+      image: '/journey/5.jpg',
+      title: 'Warm Hugs',
+      description: 'The safest place in the world is within your arms.',
+      year: '2023'
+    },
+    {
+      image: '/journey/6.jpg',
+      title: 'Heart to Heart',
+      description: 'Deep conversations and quiet moments that define our bond.',
+      year: '2024'
+    },
+    {
+      image: '/journey/7.jpg',
+      title: 'Small Rides',
+      description: 'Remember our small rides? Every journey with you is an adventure.',
+      year: '2024'
+    },
+    {
+      image: '/journey/8.jpg',
+      title: 'That Fragrance',
+      description: 'This one alsoo ..... that fragrance 🥰',
+      year: '2025'
+    },
+    {
+      image: '/journey/9.jpg',
+      title: 'Missing You',
+      description: 'I miss this one ☝🏻 Every moment apart only makes me love you more.',
+      year: '2025'
+    },
+    {
+      image: '/journey/10.jpg',
+      title: 'Same Attitude',
+      description: 'And I think we have same attitude level after fight 🤐',
+      year: '2025'
+    }
 ];
 
 function JourneyItem({ item, index }: { item: typeof JOURNEY_DATA[0], index: number }) {
