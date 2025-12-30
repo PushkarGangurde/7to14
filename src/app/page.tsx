@@ -9,8 +9,21 @@ import { intervalToDuration } from 'date-fns';
 import { getPhotos } from '@/lib/supabase';
 import { Aurora } from '@/components/Aurora';
 import { JourneySection } from '@/components/JourneySection';
+import FlowingMenu from '@/components/FlowingMenu';
 
 const START_DATE = new Date(2020, 0, 7); // Jan 7, 2020
+
+const PLACES_TO_VISIT = [
+  { link: '#', text: 'Paris', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1000' },
+  { link: '#', text: 'Bali', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=1000' },
+  { link: '#', text: 'Maldives', image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=1000' },
+  { link: '#', text: 'Spain (Madrid)', image: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?q=80&w=1000' },
+  { link: '#', text: 'Kashmir', image: 'https://images.unsplash.com/photo-1595815771614-ade9d652a65d?q=80&w=1000' },
+  { link: '#', text: 'Ladakh', image: 'https://images.unsplash.com/photo-1581791534721-e599df4417f7?q=80&w=1000' },
+  { link: '#', text: 'Brooklyn', image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?q=80&w=1000' },
+  { link: '#', text: 'Beach (TBD)', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1000' },
+  { link: '#', text: 'Darjeeling', image: 'https://images.unsplash.com/photo-1544460481-37d4f9b870c5?q=80&w=1000' },
+];
 
 export default function HomePage() {
   const [timeSince, setTimeSince] = useState<Duration>({});
@@ -151,6 +164,33 @@ export default function HomePage() {
 
       {/* Journey Section */}
       <JourneySection />
+
+      {/* Places to Visit Section */}
+      <section className="relative py-32 overflow-hidden border-t border-white/5">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          viewport={{ once: true }}
+          className="container mx-auto px-6 mb-16 text-center"
+        >
+          <h2 className="text-4xl md:text-6xl font-sans text-white tracking-tighter mb-4">
+            Places to Visit
+          </h2>
+          <p className="text-slate-500 tracking-[0.2em] uppercase text-xs md:text-sm">
+            Our future destination wishlist
+          </p>
+        </motion.div>
+
+        <div className="h-[600px] relative w-full border-y border-white/5">
+          <FlowingMenu 
+            items={PLACES_TO_VISIT} 
+            textColor="#fff"
+            marqueeBgColor="#fff"
+            marqueeTextColor="#000"
+          />
+        </div>
+      </section>
 
       {/* Final CTA Section */}
       <section className="relative py-32 px-6 flex flex-col items-center justify-center overflow-hidden">

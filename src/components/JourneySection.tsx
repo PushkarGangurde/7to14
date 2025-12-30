@@ -1,6 +1,8 @@
 'use client';
 
-import { Aurora } from './Aurora';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import Image from 'next/image';
 
 const JOURNEY_DATA = [
   {
@@ -59,39 +61,39 @@ const JOURNEY_DATA = [
     },
     {
       image: '/journey/10.jpg',
-      title: 'Same Attitude',
-      description: 'And I think we have same attitude level after fight 🤐',
-      year: '2025'
+      title: 'Sleeper Head',
+      description: 'A heavy sleeper who could drift off anywhere—yet you always find a way to make me your priority.',
+      year: ''
     },
     {
     image: '/journey/11.jpg',
-    title: 'The Beginning',
-    description: 'Where our story first sparked into life. Every moment since has been a treasure.',
-    year: '2020'
+    title: 'Cozy Moments',
+    description: 'Where we lose ourselves in stories, wrapped in the warmth of each other\’s arms.',
+    year: ''
     },
     {
     image: '/journey/12.jpg',
-    title: 'The Beginning',
-    description: 'Where our story first sparked into life. Every moment since has been a treasure.',
-    year: '2020'
+    title: 'Hour-long Hugs',
+    description: 'Hours spent on the terrace with you in my arms, where the world falls away and leaves us undisturbed.',
+    year: ''
     },
     {
     image: '/journey/13.jpg',
-    title: 'Cozy Moments',
-    description: 'Where our story first sparked into life. Every moment since has been a treasure.',
-    year: '2020'
+    title: 'A beautiful obsession',
+    description: 'Our favorite ritual: capturing ourselves in the same mirror, a recurring frame for our evolving story.',
+    year: ''
     },
     {
     image: '/journey/14.jpg',
-    title: 'The Beginning',
-    description: 'Where our story first sparked into life. Every moment since has been a treasure.',
-    year: '2020'
+    title: 'Cuddling Session',
+    description: 'Our cherished escape: hours lost in each other\'s arms, drifting through effortless conversation and quiet warmth.',
+    year: ''
     },
     {
     image: '/journey/15.jpg',
-    title: 'The Beginning',
-    description: 'Where our story first sparked into life. Every moment since has been a treasure.',
-    year: '2020'
+    title: 'The Day',
+    description: 'The day my heart raced with an intensity I\’d never known — we were breathless with nerves, yet it remains the most beautiful memory I carry.',
+    year: ''
     },
 ];
 
@@ -168,18 +170,8 @@ function JourneyItem({ item, index }: { item: typeof JOURNEY_DATA[0], index: num
 
 export function JourneySection() {
   return (
-    <section className="relative bg-black px-6 overflow-hidden">
-      {/* Background Aurora for this section */}
-      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-        <Aurora
-          colorStops={["#14e818", "#017ed5", "#b53dff"]}
-          blend={0.5}
-          amplitude={1.0}
-          speed={0.3}
-        />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto">
+    <section className="relative bg-black px-6">
+      <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="pt-32 pb-16 text-center space-y-4">
           <motion.h2 
