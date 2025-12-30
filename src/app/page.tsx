@@ -51,7 +51,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden bg-black">
+    <div className="relative min-h-screen flex flex-col items-center justify-center p-6 pt-32 pb-12 overflow-hidden bg-black">
       {/* New Aurora Hero Background */}
       <div className="absolute inset-0 z-0 opacity-60">
         <Aurora
@@ -62,7 +62,7 @@ export default function HomePage() {
         />
       </div>
 
-      <div className="z-10 w-full max-w-4xl flex flex-col items-center space-y-16">
+      <div className="z-10 w-full max-w-4xl flex flex-col items-center space-y-16 translate-y-8">
         {/* Introducing 7to14 Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
