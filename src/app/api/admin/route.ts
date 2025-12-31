@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   try {
     const { code } = await request.json();
-    const adminCode = process.env.ADMIN_CODE || 'pushkar_tanu_2020';
+      const adminCode = process.env.ADMIN_CODE || 'kichku_tanu_2020';
 
     if (code === adminCode) {
       return NextResponse.json({ success: true });
