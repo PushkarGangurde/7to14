@@ -176,6 +176,14 @@ export default function HomePage() {
 
       {/* Places to Visit Section */}
       <section className="relative py-32 overflow-hidden border-t border-white/5">
+        <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
+          <Aurora
+            colorStops={["#b53dff", "#017ed5", "#14e818"]}
+            blend={0.5}
+            amplitude={1.0}
+            speed={0.4}
+          />
+        </div>
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
