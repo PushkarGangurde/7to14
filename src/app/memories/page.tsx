@@ -87,8 +87,6 @@ export default function MemoriesPage() {
   // Upload State
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<string>(months[new Date().getMonth()]);
-  const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString());
 
   useEffect(() => {
     fetchPhotos();
@@ -162,9 +160,13 @@ export default function MemoriesPage() {
     if (!selectedFile) return;
     setUploading(true);
     try {
+      const now = new Date();
+      const month = months[now.getMonth()];
+      const year = now.getFullYear();
+      const monthNum = now.getMonth() + 1;
+      
       const url = await uploadToStorage(selectedFile);
-      const monthNum = months.indexOf(selectedMonth) + 1;
-      await uploadPhoto(url, selectedMonth, parseInt(selectedYear), monthNum);
+      await uploadPhoto(url, month, year, monthNum);
       toast.success('Memory captured!');
       fetchPhotos();
       setSelectedFile(null);
@@ -192,13 +194,13 @@ export default function MemoriesPage() {
       onClick={handleTripleTap}
     >
       {/* Admin Controls Overlay */}
-      <div className="fixed top-32 left-1/2 -translate-x-1/2 z-50">
+      <div className="fixed bottom-8 right-8 z-50">
         {isAdmin && (
-          <div className="flex flex-col items-center space-y-4">
+          <div className="flex flex-col items-end space-y-4">
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="rounded-full bg-white text-black hover:bg-slate-200 shadow-lg px-6 h-10 border-none">
-                  <Plus className="mr-2" size={16} /> Add Memory
+                <Button className="rounded-full bg-white text-black hover:bg-slate-200 shadow-lg px-6 h-12 border-none">
+                  <Plus className="mr-2" size={18} /> Add Memory
                 </Button>
               </DialogTrigger>
               <DialogContent className="rounded-3xl border-slate-800 bg-slate-950 text-white">
@@ -226,35 +228,6 @@ export default function MemoriesPage() {
                           <p className="text-sm text-slate-600">Click or drag to upload</p>
                         </div>
                       )}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest text-slate-500">Month</label>
-                      <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                        <SelectTrigger className="rounded-xl border-slate-800 bg-slate-900">
-                          <SelectValue placeholder="Month" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl border-slate-800 bg-slate-950 text-white">
-                          {months.map(m => (
-                            <SelectItem key={m} value={m}>{m}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest text-slate-500">Year</label>
-                      <Select value={selectedYear} onValueChange={setSelectedYear}>
-                        <SelectTrigger className="rounded-xl border-slate-800 bg-slate-900">
-                          <SelectValue placeholder="Year" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl border-slate-800 bg-slate-950 text-white">
-                          {[2020, 2021, 2022, 2023, 2024, 2025].map(y => (
-                            <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
                     </div>
                   </div>
 
