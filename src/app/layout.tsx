@@ -45,7 +45,9 @@ export default function RootLayout({
               DYE_RESOLUTION={512} 
               SIM_RESOLUTION={128} 
               PRESSURE_ITERATIONS={10} 
-              SPLAT_RADIUS={0.15}
+              SPLAT_RADIUS={0.08}
+              DENSITY_DISSIPATION={4.5}
+              VELOCITY_DISSIPATION={3.0}
             />
         </LenisProvider>
       </body>
