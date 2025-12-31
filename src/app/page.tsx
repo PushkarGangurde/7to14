@@ -79,19 +79,6 @@ export default function HomePage() {
 
   return (
     <div className="bg-black relative">
-      {/* Global Persistent Aurora Background */}
-      <motion.div 
-        style={{ opacity: bgAuroraOpacity }}
-        className="fixed inset-0 z-0 pointer-events-none"
-      >
-        <Aurora
-          colorStops={["#017ed5", "#14e818", "#b53dff"]}
-          blend={0.6}
-          amplitude={0.8}
-          speed={0.2}
-        />
-      </motion.div>
-
       {/* Hero Section */}
       <div ref={containerRef} className="relative min-h-screen flex flex-col items-center justify-center p-6 pt-32 pb-12 overflow-hidden">
         {/* New Aurora Hero Background */}

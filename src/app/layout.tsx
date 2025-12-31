@@ -41,7 +41,12 @@ export default function RootLayout({
           <Navbar />
           <Toaster position="top-center" />
           <VisualEditsMessenger />
-          <SplashCursor />
+            <SplashCursor 
+              DYE_RESOLUTION={512} 
+              SIM_RESOLUTION={128} 
+              PRESSURE_ITERATIONS={10} 
+              SPLAT_RADIUS={0.15}
+            />
         </LenisProvider>
       </body>
     </html>
