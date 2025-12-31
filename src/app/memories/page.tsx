@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Image as ImageIcon, X, Upload, Trash2, Maximize2 } from 'lucide-react';
 import { Loader } from '@/components/Loader';
@@ -145,14 +145,20 @@ export default function MemoriesPage() {
     }
   };
 
-  const menuItems: MenuItem[] = photos.length > 0 
-    ? photos.map(p => ({
-        image: p.url,
-        link: '#',
-        title: `${p.month} ${p.year}`,
-        description: 'A captured moment'
-      }))
-    : tempItems;
+  const menuItems: MenuItem[] = useMemo(() => {
+    return photos.length > 0 
+      ? photos.map(p => ({
+          image: p.url,
+          link: '#',
+          title: `${p.month} ${p.year}`,
+          description: 'A captured moment'
+        }))
+      : tempItems;
+  }, [photos]);
+
+  const handleFullscreen = useCallback((item: MenuItem) => {
+    setFullscreenItem(item);
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black overflow-hidden select-none">
@@ -166,7 +172,7 @@ export default function MemoriesPage() {
           <InfiniteMenu 
             items={menuItems} 
             scale={2} 
-            onDoubleClick={(item) => setFullscreenItem(item)}
+            onDoubleClick={handleFullscreen}
           />
         )}
       </div>

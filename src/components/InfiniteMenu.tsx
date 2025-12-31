@@ -486,6 +486,7 @@ type UpdateCallback = (deltaTime: number) => void;
 class ArcballControl {
   private canvas: HTMLCanvasElement;
   private updateCallback: UpdateCallback;
+  private eventListeners: Array<{ type: string; handler: (e: any) => void }> = [];
 
   public isPointerDown = false;
   public orientation = quat.create();
@@ -508,23 +509,43 @@ class ArcballControl {
     this.canvas = canvas;
     this.updateCallback = updateCallback || (() => undefined);
 
-    canvas.addEventListener('pointerdown', (e: PointerEvent) => {
+    const onPointerDown = (e: PointerEvent) => {
       vec2.set(this.pointerPos, e.clientX, e.clientY);
       vec2.copy(this.previousPointerPos, this.pointerPos);
       this.isPointerDown = true;
-    });
-    canvas.addEventListener('pointerup', () => {
+    };
+    const onPointerUp = () => {
       this.isPointerDown = false;
-    });
-    canvas.addEventListener('pointerleave', () => {
+    };
+    const onPointerLeave = () => {
       this.isPointerDown = false;
-    });
-    canvas.addEventListener('pointermove', (e: PointerEvent) => {
+    };
+    const onPointerMove = (e: PointerEvent) => {
       if (this.isPointerDown) {
         vec2.set(this.pointerPos, e.clientX, e.clientY);
       }
-    });
+    };
+
+    canvas.addEventListener('pointerdown', onPointerDown);
+    canvas.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('pointerleave', onPointerLeave);
+    canvas.addEventListener('pointermove', onPointerMove);
+
+    this.eventListeners.push(
+      { type: 'pointerdown', handler: onPointerDown },
+      { type: 'pointerup', handler: onPointerUp },
+      { type: 'pointerleave', handler: onPointerLeave },
+      { type: 'pointermove', handler: onPointerMove }
+    );
+
     canvas.style.touchAction = 'none';
+  }
+
+  public destroy(): void {
+    this.eventListeners.forEach(({ type, handler }) => {
+      this.canvas.removeEventListener(type, handler);
+    });
+    this.eventListeners = [];
   }
 
   public update(deltaTime: number, targetFrameDuration = 16): void {
@@ -704,6 +725,8 @@ class InfiniteGridMenu {
 
   private TARGET_FRAME_DURATION = 1000 / 60;
   private SPHERE_RADIUS = 2;
+  private animationId: number | null = null;
+  private isDestroyed = false;
 
   public camera: Camera = {
     matrix: mat4.create(),
@@ -750,7 +773,25 @@ class InfiniteGridMenu {
     this.updateProjectionMatrix();
   }
 
+  public destroy(): void {
+    this.isDestroyed = true;
+    if (this.animationId !== null) {
+      cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
+    if (this.control) {
+      this.control.destroy();
+    }
+    if (this.gl) {
+      if (this.tex) this.gl.deleteTexture(this.tex);
+      if (this.discVAO) this.gl.deleteVertexArray(this.discVAO);
+      if (this.discProgram) this.gl.deleteProgram(this.discProgram);
+      if (this.discInstances?.buffer) this.gl.deleteBuffer(this.discInstances.buffer);
+    }
+  }
+
   public run(time = 0): void {
+    if (this.isDestroyed) return;
     this._deltaTime = Math.min(32, time - this._time);
     this._time = time;
     this._deltaFrames = this._deltaTime / this.TARGET_FRAME_DURATION;
@@ -759,7 +800,7 @@ class InfiniteGridMenu {
     this.animate(this._deltaTime);
     this.render();
 
-    requestAnimationFrame(t => this.run(t));
+    this.animationId = requestAnimationFrame(t => this.run(t));
   }
 
   private init(onInit?: InitCallback): void {
@@ -1110,6 +1151,7 @@ export function InfiniteMenu({ items = [], scale = 1.0, onDoubleClick }: Infinit
     return () => {
       window.removeEventListener('resize', handleResize);
       canvas?.removeEventListener('dblclick', handleDoubleClick);
+      sketchRef.current?.destroy();
     };
   }, [items, scale, onDoubleClick]);
 
