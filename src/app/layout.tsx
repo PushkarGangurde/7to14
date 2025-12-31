@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { VisualEditsMessenger } from "orchids-visual-edits";
 import { LenisProvider } from "@/components/LenisProvider";
+import SplashCursor from "@/components/SplashCursor";
 
 import { AuroraGradient } from "@/components/AuroraGradient";
 
@@ -35,6 +36,7 @@ export default function RootLayout({
           <Navbar />
           <Toaster position="top-center" />
           <VisualEditsMessenger />
+          <SplashCursor />
         </LenisProvider>
       </body>
     </html>
