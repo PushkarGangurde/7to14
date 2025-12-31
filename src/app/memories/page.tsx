@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Image as ImageIcon, X, Upload, Trash2 } from 'lucide-react';
+import { Plus, Image as ImageIcon, X, Upload, Trash2, Maximize2 } from 'lucide-react';
 import { Loader } from '@/components/Loader';
 import { getPhotos, uploadPhoto, uploadToStorage, deletePhoto } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
@@ -13,13 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { InfiniteMenu, MenuItem } from '@/components/InfiniteMenu';
@@ -55,18 +48,6 @@ const tempItems: MenuItem[] = [
     link: '#',
     title: 'Item 3',
     description: 'Forever together'
-  },
-  {
-    image: 'https://picsum.photos/600/600?grayscale',
-    link: '#',
-    title: 'Item 4',
-    description: 'Love is in the air'
-  },
-  {
-    image: 'https://picsum.photos/700/700?grayscale',
-    link: '#',
-    title: 'Item 5',
-    description: 'Captured memories'
   }
 ];
 
@@ -75,10 +56,6 @@ export default function MemoriesPage() {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   
-  // Triple-tap state
-  const [clickCount, setClickCount] = useState(0);
-  const [lastClickTime, setLastClickTime] = useState(0);
-
   // Admin Dialog State
   const [showAdminDialog, setShowAdminDialog] = useState(false);
   const [adminCodeInput, setAdminCodeInput] = useState('');
@@ -88,26 +65,24 @@ export default function MemoriesPage() {
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  // Full Screen State
+  const [fullscreenItem, setFullscreenItem] = useState<MenuItem | null>(null);
+
   useEffect(() => {
     fetchPhotos();
     setIsAdmin(localStorage.getItem('is_admin') === 'true');
-  }, []);
 
-  const handleTripleTap = () => {
-    const now = Date.now();
-    if (now - lastClickTime < 500) {
-      const newCount = clickCount + 1;
-      if (newCount >= 3) {
-        handleAdminToggle();
-        setClickCount(0);
+    const handleAdminTrigger = () => {
+      if (!isAdmin) {
+        setShowAdminDialog(true);
       } else {
-        setClickCount(newCount);
+        toast.info('You are already in admin mode');
       }
-    } else {
-      setClickCount(1);
-    }
-    setLastClickTime(now);
-  };
+    };
+
+    window.addEventListener('trigger-admin-login', handleAdminTrigger);
+    return () => window.removeEventListener('trigger-admin-login', handleAdminTrigger);
+  }, [isAdmin]);
 
   const fetchPhotos = async () => {
     try {
@@ -119,14 +94,6 @@ export default function MemoriesPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleAdminToggle = () => {
-    if (isAdmin) {
-      toast.info('You are already in admin mode');
-      return;
-    }
-    setShowAdminDialog(true);
   };
 
   const handleAdminVerify = async () => {
@@ -178,7 +145,6 @@ export default function MemoriesPage() {
     }
   };
 
-  // Map real photos to MenuItem format if available
   const menuItems: MenuItem[] = photos.length > 0 
     ? photos.map(p => ({
         image: p.url,
@@ -189,17 +155,29 @@ export default function MemoriesPage() {
     : tempItems;
 
   return (
-    <div 
-      className="min-h-screen bg-black overflow-hidden flex flex-col"
-      onClick={handleTripleTap}
-    >
+    <div className="fixed inset-0 bg-black overflow-hidden select-none">
+      {/* Infinite Gallery - Full Page */}
+      <div className="absolute inset-0 z-0">
+        {loading ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loader fullScreen={false} size={48} />
+          </div>
+        ) : (
+          <InfiniteMenu 
+            items={menuItems} 
+            scale={2} 
+            onDoubleClick={(item) => setFullscreenItem(item)}
+          />
+        )}
+      </div>
+
       {/* Admin Controls Overlay */}
-      <div className="fixed bottom-8 right-8 z-50">
+      <div className="fixed bottom-24 right-8 z-50">
         {isAdmin && (
           <div className="flex flex-col items-end space-y-4">
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="rounded-full bg-white text-black hover:bg-slate-200 shadow-lg px-6 h-12 border-none">
+                <Button className="rounded-full bg-white text-black hover:bg-slate-200 shadow-lg px-6 h-12 border-none font-bold">
                   <Plus className="mr-2" size={18} /> Add Memory
                 </Button>
               </DialogTrigger>
@@ -257,18 +235,43 @@ export default function MemoriesPage() {
         )}
       </div>
 
-      {/* Infinite Gallery */}
-      <div className="flex-1 w-full h-screen relative">
-        {loading ? (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Loader fullScreen={false} size={48} />
-          </div>
-        ) : (
-          <div className="w-full h-full">
-            <InfiniteMenu items={menuItems} scale={2} />
-          </div>
+      {/* Full Screen Overlay */}
+      <AnimatePresence>
+        {fullscreenItem && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onDoubleClick={() => setFullscreenItem(null)}
+            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 md:p-12 cursor-zoom-out"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-5xl w-full h-full flex flex-col items-center justify-center"
+            >
+              <button 
+                onClick={() => setFullscreenItem(null)}
+                className="absolute top-0 right-0 p-4 text-white/50 hover:text-white transition-colors z-[101]"
+              >
+                <X size={32} />
+              </button>
+              
+              <img 
+                src={fullscreenItem.image} 
+                alt={fullscreenItem.title}
+                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              />
+              
+              <div className="mt-8 text-center">
+                <h3 className="text-2xl font-bold text-white tracking-tight">{fullscreenItem.title}</h3>
+                <p className="text-slate-400 mt-1">{fullscreenItem.description}</p>
+              </div>
+            </motion.div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
 
       {/* Admin Verify Dialog */}
       <Dialog open={showAdminDialog} onOpenChange={setShowAdminDialog}>

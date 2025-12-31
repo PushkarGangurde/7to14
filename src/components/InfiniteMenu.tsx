@@ -736,6 +736,11 @@ class InfiniteGridMenu {
     this.init(onInit);
   }
 
+  public getNearestItemIndex(): number {
+    const nearestVertexIndex = this.findNearestVertexIndex();
+    return nearestVertexIndex % Math.max(1, this.items.length);
+  }
+
   public resize(): void {
     const needsResize = resizeCanvasToDisplaySize(this.canvas);
     if (!this.gl) return;
@@ -1057,23 +1062,23 @@ const defaultItems: MenuItem[] = [
 interface InfiniteMenuProps {
   items?: MenuItem[];
   scale?: number;
+  onDoubleClick?: (item: MenuItem) => void;
 }
 
-export function InfiniteMenu({ items = [], scale = 1.0 }: InfiniteMenuProps) {
+export function InfiniteMenu({ items = [], scale = 1.0, onDoubleClick }: InfiniteMenuProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null) as MutableRefObject<HTMLCanvasElement | null>;
   const [isMoving, setIsMoving] = useState<boolean>(false);
+  const sketchRef = useRef<InfiniteGridMenu | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    let sketch: InfiniteGridMenu | null = null;
-
+    
     const handleActiveItem = (index: number) => {
-      // Logic for active item can remain if needed for future, 
-      // but we don't need to update state if nothing uses it.
+      // Logic for active item
     };
 
     if (canvas) {
-      sketch = new InfiniteGridMenu(
+      sketchRef.current = new InfiniteGridMenu(
         canvas,
         items.length ? items : defaultItems,
         handleActiveItem,
@@ -1084,18 +1089,29 @@ export function InfiniteMenu({ items = [], scale = 1.0 }: InfiniteMenuProps) {
     }
 
     const handleResize = () => {
-      if (sketch) {
-        sketch.resize();
+      if (sketchRef.current) {
+        sketchRef.current.resize();
       }
     };
+
+    const handleDoubleClick = () => {
+      if (sketchRef.current && onDoubleClick) {
+        const index = sketchRef.current.getNearestItemIndex();
+        const item = items.length ? items[index] : defaultItems[0];
+        onDoubleClick(item);
+      }
+    };
+
+    canvas?.addEventListener('dblclick', handleDoubleClick);
 
     window.addEventListener('resize', handleResize);
     handleResize();
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      canvas?.removeEventListener('dblclick', handleDoubleClick);
     };
-  }, [items, scale]);
+  }, [items, scale, onDoubleClick]);
 
   return (
     <div className="relative w-full h-full">
