@@ -13,13 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { InfiniteMenu, MenuItem } from '@/components/InfiniteMenu';
@@ -74,10 +67,7 @@ export default function MemoriesPage() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  
-  // Triple-tap state
-  const [clickCount, setClickCount] = useState(0);
-  const [lastClickTime, setLastClickTime] = useState(0);
+  const [fullscreenPhoto, setFullscreenPhoto] = useState<string | null>(null);
 
   // Admin Dialog State
   const [showAdminDialog, setShowAdminDialog] = useState(false);
@@ -91,23 +81,18 @@ export default function MemoriesPage() {
   useEffect(() => {
     fetchPhotos();
     setIsAdmin(localStorage.getItem('is_admin') === 'true');
-  }, []);
 
-  const handleTripleTap = () => {
-    const now = Date.now();
-    if (now - lastClickTime < 500) {
-      const newCount = clickCount + 1;
-      if (newCount >= 3) {
-        handleAdminToggle();
-        setClickCount(0);
+    const handleTriggerAdmin = () => {
+      if (!isAdmin) {
+        setShowAdminDialog(true);
       } else {
-        setClickCount(newCount);
+        toast.info('You are already in admin mode');
       }
-    } else {
-      setClickCount(1);
-    }
-    setLastClickTime(now);
-  };
+    };
+
+    window.addEventListener('trigger-admin-mode', handleTriggerAdmin);
+    return () => window.removeEventListener('trigger-admin-mode', handleTriggerAdmin);
+  }, [isAdmin]);
 
   const fetchPhotos = async () => {
     try {
@@ -119,14 +104,6 @@ export default function MemoriesPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleAdminToggle = () => {
-    if (isAdmin) {
-      toast.info('You are already in admin mode');
-      return;
-    }
-    setShowAdminDialog(true);
   };
 
   const handleAdminVerify = async () => {
@@ -189,17 +166,29 @@ export default function MemoriesPage() {
     : tempItems;
 
   return (
-    <div 
-      className="min-h-screen bg-black overflow-hidden flex flex-col"
-      onClick={handleTripleTap}
-    >
+    <div className="fixed inset-0 bg-black overflow-hidden select-none">
+      {/* Infinite Gallery */}
+      <div className="absolute inset-0 w-full h-full">
+        {loading ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loader fullScreen={false} size={48} />
+          </div>
+        ) : (
+          <InfiniteMenu 
+            items={menuItems} 
+            scale={2} 
+            onItemDoubleClick={(index) => setFullscreenPhoto(menuItems[index].image)}
+          />
+        )}
+      </div>
+
       {/* Admin Controls Overlay */}
-      <div className="fixed bottom-8 right-8 z-50">
+      <div className="fixed bottom-24 right-8 z-40">
         {isAdmin && (
           <div className="flex flex-col items-end space-y-4">
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="rounded-full bg-white text-black hover:bg-slate-200 shadow-lg px-6 h-12 border-none">
+                <Button className="rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-white/20 shadow-lg px-6 h-12 border border-white/20">
                   <Plus className="mr-2" size={18} /> Add Memory
                 </Button>
               </DialogTrigger>
@@ -257,19 +246,6 @@ export default function MemoriesPage() {
         )}
       </div>
 
-      {/* Infinite Gallery */}
-      <div className="flex-1 w-full h-screen relative">
-        {loading ? (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Loader fullScreen={false} size={48} />
-          </div>
-        ) : (
-          <div className="w-full h-full">
-            <InfiniteMenu items={menuItems} scale={2} />
-          </div>
-        )}
-      </div>
-
       {/* Admin Verify Dialog */}
       <Dialog open={showAdminDialog} onOpenChange={setShowAdminDialog}>
         <DialogContent className="rounded-3xl border-slate-800 bg-slate-950 sm:max-w-md">
@@ -298,6 +274,38 @@ export default function MemoriesPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Fullscreen Image Overlay */}
+      <AnimatePresence>
+        {fullscreenPhoto && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4"
+            onClick={() => setFullscreenPhoto(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-full max-h-full"
+            >
+              <img 
+                src={fullscreenPhoto} 
+                alt="Fullscreen" 
+                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+              />
+              <button 
+                className="absolute -top-12 right-0 text-white/50 hover:text-white transition-colors"
+                onClick={() => setFullscreenPhoto(null)}
+              >
+                <X size={32} />
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

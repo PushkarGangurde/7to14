@@ -632,6 +632,7 @@ export interface MenuItem {
 }
 
 type ActiveItemCallback = (index: number) => void;
+type ItemDoubleClickCallback = (index: number) => void;
 type MovementChangeCallback = (isMoving: boolean) => void;
 type InitCallback = (instance: InfiniteGridMenu) => void;
 
@@ -692,49 +693,58 @@ class InfiniteGridMenu {
   };
 
   private instancePositions: vec3[] = [];
-  private DISC_INSTANCE_COUNT = 0;
-  private atlasSize = 1;
+    private DISC_INSTANCE_COUNT = 0;
+    private atlasSize = 1;
 
-  private _time = 0;
-  private _deltaTime = 0;
-  private _deltaFrames = 0;
-  private _frames = 0;
+    private _time = 0;
+    private _deltaTime = 0;
+    private _deltaFrames = 0;
+    private _frames = 0;
 
-  private movementActive = false;
+    private movementActive = false;
 
-  private TARGET_FRAME_DURATION = 1000 / 60;
-  private SPHERE_RADIUS = 2;
+    private TARGET_FRAME_DURATION = 1000 / 60;
+    private SPHERE_RADIUS = 2;
 
-  public camera: Camera = {
-    matrix: mat4.create(),
-    near: 0.1,
-    far: 40,
-    fov: Math.PI / 4,
-    aspect: 1,
-    position: vec3.fromValues(0, 0, 3),
-    up: vec3.fromValues(0, 1, 0),
-    matrices: {
-      view: mat4.create(),
-      projection: mat4.create(),
-      inversProjection: mat4.create()
+    public camera: Camera = {
+      matrix: mat4.create(),
+      near: 0.1,
+      far: 40,
+      fov: Math.PI / 4,
+      aspect: 1,
+      position: vec3.fromValues(0, 0, 3),
+      up: vec3.fromValues(0, 1, 0),
+      matrices: {
+        view: mat4.create(),
+        projection: mat4.create(),
+        inversProjection: mat4.create()
+      }
+    };
+
+    public smoothRotationVelocity = 0;
+    public scaleFactor = 1.0;
+
+    constructor(
+      private canvas: HTMLCanvasElement,
+      private items: MenuItem[],
+      private onActiveItemChange: ActiveItemCallback,
+      private onItemDoubleClick: ItemDoubleClickCallback,
+      private onMovementChange: MovementChangeCallback,
+      onInit?: InitCallback,
+      scale: number = 1.0
+    ) {
+      this.scaleFactor = scale;
+      this.camera.position[2] = 3 * scale;
+      
+      this.canvas.addEventListener('dblclick', () => {
+        const nearestVertexIndex = this.findNearestVertexIndex();
+        const itemIndex = nearestVertexIndex % Math.max(1, this.items.length);
+        this.onItemDoubleClick(itemIndex);
+      });
+
+      this.init(onInit);
     }
-  };
 
-  public smoothRotationVelocity = 0;
-  public scaleFactor = 1.0;
-
-  constructor(
-    private canvas: HTMLCanvasElement,
-    private items: MenuItem[],
-    private onActiveItemChange: ActiveItemCallback,
-    private onMovementChange: MovementChangeCallback,
-    onInit?: InitCallback,
-    scale: number = 1.0
-  ) {
-    this.scaleFactor = scale;
-    this.camera.position[2] = 3 * scale;
-    this.init(onInit);
-  }
 
   public resize(): void {
     const needsResize = resizeCanvasToDisplaySize(this.canvas);
@@ -1057,9 +1067,10 @@ const defaultItems: MenuItem[] = [
 interface InfiniteMenuProps {
   items?: MenuItem[];
   scale?: number;
+  onItemDoubleClick?: (index: number) => void;
 }
 
-export function InfiniteMenu({ items = [], scale = 1.0 }: InfiniteMenuProps) {
+export function InfiniteMenu({ items = [], scale = 1.0, onItemDoubleClick }: InfiniteMenuProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null) as MutableRefObject<HTMLCanvasElement | null>;
   const [isMoving, setIsMoving] = useState<boolean>(false);
 
@@ -1077,6 +1088,7 @@ export function InfiniteMenu({ items = [], scale = 1.0 }: InfiniteMenuProps) {
         canvas,
         items.length ? items : defaultItems,
         handleActiveItem,
+        (index) => onItemDoubleClick?.(index),
         setIsMoving,
         sk => sk.run(),
         scale

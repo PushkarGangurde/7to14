@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -34,6 +35,23 @@ const navItems = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
+
+  const handlePointerDown = (label: string) => {
+    if (label === 'Memories') {
+      const timer = setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('trigger-admin-mode'));
+      }, 5000);
+      setPressTimer(timer);
+    }
+  };
+
+  const handlePointerUp = () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      setPressTimer(null);
+    }
+  };
 
   if (pathname === '/login') return null;
 
@@ -44,15 +62,19 @@ export function Navbar() {
           const isActive = pathname === item.href;
           const Icon = item.icon;
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "relative flex flex-col items-center p-2 rounded-xl transition-all duration-300",
-                  isActive ? "text-white" : "text-slate-500 hover:text-white"
-                )}
-              >
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onPointerDown={() => handlePointerDown(item.label)}
+                  onPointerUp={handlePointerUp}
+                  onPointerLeave={handlePointerUp}
+                  className={cn(
+                    "relative flex flex-col items-center p-2 rounded-xl transition-all duration-300",
+                    isActive ? "text-white" : "text-slate-500 hover:text-white"
+                  )}
+                >
+
                 <motion.div
                   whileTap={{ scale: 0.9 }}
                   className="flex flex-col items-center"
