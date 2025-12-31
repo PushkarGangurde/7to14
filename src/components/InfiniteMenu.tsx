@@ -3,237 +3,6 @@
 import { FC, useRef, useState, useEffect, MutableRefObject } from 'react';
 import { mat4, quat, vec2, vec3 } from 'gl-matrix';
 
-// --- Types & Interfaces ---
-
-export interface MenuItem {
-  image: string;
-  link: string;
-  title: string;
-  description: string;
-}
-
-export interface Camera {
-  matrix: mat4;
-  near: number;
-  far: number;
-  fov: number;
-  aspect: number;
-  position: vec3;
-  up: vec3;
-  matrices: {
-    view: mat4;
-    projection: mat4;
-    inversProjection: mat4;
-  };
-}
-
-export type ActiveItemCallback = (index: number) => void;
-export type MovementChangeCallback = (isMoving: boolean) => void;
-export type InitCallback = (instance: InfiniteGridMenu) => void;
-
-// --- WebGL Utilities ---
-
-function createShader(gl: WebGL2RenderingContext, type: number, source: string): WebGLShader {
-  const shader = gl.createShader(type);
-  if (!shader) throw new Error('Could not create shader');
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    const info = gl.getShaderInfoLog(shader);
-    gl.deleteShader(shader);
-    throw new Error('Could not compile shader: ' + info);
-  }
-  return shader;
-}
-
-function createProgram(
-  gl: WebGL2RenderingContext,
-  sources: [string, string],
-  transformFeedbackVaryings: string[] | null = null,
-  attributionLocations: Record<string, number> | null = null
-): WebGLProgram {
-  const program = gl.createProgram();
-  if (!program) throw new Error('Could not create program');
-  
-  const [vsSource, fsSource] = sources;
-  const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
-  const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
-  
-  gl.attachShader(program, vs);
-  gl.attachShader(program, fs);
-  
-  if (transformFeedbackVaryings) {
-    gl.transformFeedbackVaryings(program, transformFeedbackVaryings, gl.INTERLEAVED_ATTRIBS);
-  }
-  
-  if (attributionLocations) {
-    for (const [name, location] of Object.entries(attributionLocations)) {
-      gl.bindAttribLocation(program, location, name);
-    }
-  }
-  
-  gl.linkProgram(program);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    const info = gl.getProgramInfoLog(program);
-    gl.deleteProgram(program);
-    throw new Error('Could not link program: ' + info);
-  }
-  return program;
-}
-
-function makeBuffer(gl: WebGL2RenderingContext, data: BufferSource, usage: number): WebGLBuffer {
-  const buffer = gl.createBuffer();
-  if (!buffer) throw new Error('Could not create buffer');
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, data, usage);
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
-  return buffer;
-}
-
-function makeVertexArray(
-  gl: WebGL2RenderingContext,
-  attribs: [WebGLBuffer, number, number][],
-  indices: Uint16Array | null = null
-): WebGLVertexArrayObject {
-  const vao = gl.createVertexArray();
-  if (!vao) throw new Error('Could not create VAO');
-  gl.bindVertexArray(vao);
-  
-  for (const [buffer, location, size] of attribs) {
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.enableVertexAttribArray(location);
-    gl.vertexAttribPointer(location, size, gl.FLOAT, false, 0, 0);
-  }
-  
-  if (indices) {
-    const indexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-  }
-  
-  gl.bindVertexArray(null);
-  return vao;
-}
-
-function createAndSetupTexture(
-  gl: WebGL2RenderingContext,
-  minFilter: number,
-  magFilter: number,
-  wrapS: number,
-  wrapT: number
-): WebGLTexture {
-  const texture = gl.createTexture();
-  if (!texture) throw new Error('Could not create texture');
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, minFilter);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magFilter);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapS);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapT);
-  return texture;
-}
-
-function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement): boolean {
-  const dpr = window.devicePixelRatio || 1;
-  const displayWidth = Math.floor(canvas.clientWidth * dpr);
-  const displayHeight = Math.floor(canvas.clientHeight * dpr);
-  const needResize = canvas.width !== displayWidth || canvas.height !== displayHeight;
-  if (needResize) {
-    canvas.width = displayWidth;
-    canvas.height = displayHeight;
-  }
-  return needResize;
-}
-
-// --- Interaction Control ---
-
-class ArcballControl {
-  public orientation = quat.create();
-  public rotationVelocity = 0;
-  public rotationAxis = vec3.fromValues(1, 0, 0);
-  public isPointerDown = false;
-  public snapDirection = vec3.fromValues(0, 0, 1);
-  public snapTargetDirection = vec3.fromValues(0, 0, 1);
-
-  private lastMousePos = vec2.create();
-  private mousePos = vec2.create();
-  private velocity = 0;
-  private axis = vec3.fromValues(1, 0, 0);
-
-  constructor(private canvas: HTMLCanvasElement, private onUpdate: (dt: number) => void) {
-    canvas.addEventListener('pointerdown', this.onPointerDown);
-    window.addEventListener('pointermove', this.onPointerMove);
-    window.addEventListener('pointerup', this.onPointerUp);
-  }
-
-  public destroy(): void {
-    this.canvas.removeEventListener('pointerdown', this.onPointerDown);
-    window.removeEventListener('pointermove', this.onPointerMove);
-    window.removeEventListener('pointerup', this.onPointerUp);
-  }
-
-  private onPointerDown = (e: PointerEvent) => {
-    this.isPointerDown = true;
-    vec2.set(this.lastMousePos, e.clientX, e.clientY);
-    vec2.set(this.mousePos, e.clientX, e.clientY);
-  };
-
-  private onPointerMove = (e: PointerEvent) => {
-    if (!this.isPointerDown) return;
-    vec2.set(this.mousePos, e.clientX, e.clientY);
-  };
-
-  private onPointerUp = () => {
-    this.isPointerDown = false;
-  };
-
-  public update(dt: number, targetFrameDuration: number): void {
-    const timeScale = dt / targetFrameDuration + 0.0001;
-
-    if (this.isPointerDown) {
-      const dx = this.mousePos[0] - this.lastMousePos[0];
-      const dy = this.mousePos[1] - this.lastMousePos[1];
-      const dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist > 0) {
-        this.axis[0] = dy / dist;
-        this.axis[1] = dx / dist;
-        this.axis[2] = 0;
-        this.velocity = dist * 0.005;
-      } else {
-        this.velocity *= Math.pow(0.8, timeScale);
-      }
-      
-      vec2.copy(this.lastMousePos, this.mousePos);
-    } else {
-      // Snapping logic
-      const dot = vec3.dot(this.snapDirection, this.snapTargetDirection);
-      const angle = Math.acos(Math.min(1, Math.max(-1, dot)));
-      if (angle > 0.001) {
-        const cross = vec3.cross(vec3.create(), this.snapDirection, this.snapTargetDirection);
-        vec3.normalize(cross, cross);
-        const snapVelocity = angle * 0.1;
-        this.velocity += (snapVelocity - this.velocity) * 0.2 * timeScale;
-        vec3.copy(this.axis, cross);
-      } else {
-        this.velocity *= Math.pow(0.8, timeScale);
-      }
-    }
-
-    this.rotationVelocity = this.velocity;
-    vec3.copy(this.rotationAxis, this.axis);
-
-    const q = quat.setAxisAngle(quat.create(), this.axis, this.velocity * timeScale);
-    quat.multiply(this.orientation, q, this.orientation);
-    quat.normalize(this.orientation, this.orientation);
-
-    vec3.transformQuat(this.snapDirection, [0, 0, 1], this.orientation);
-    
-    this.onUpdate(dt);
-  }
-}
-
-// --- Main Menu Class ---
-
 const discVertShaderSource = `#version 300 es
 
 uniform mat4 uWorldMatrix;
@@ -259,12 +28,22 @@ void main() {
     vec3 centerPos = (uWorldMatrix * aInstanceMatrix * vec4(0., 0., 0., 1.)).xyz;
     float radius = length(centerPos.xyz);
 
-    // Subtle stretch effect removed to prevent distortion
+    if (gl_VertexID > 0) {
+        vec3 rotationAxis = uRotationAxisVelocity.xyz;
+        float rotationVelocity = min(.15, uRotationAxisVelocity.w * 15.);
+        vec3 stretchDir = normalize(cross(centerPos, rotationAxis));
+        vec3 relativeVertexPos = normalize(worldPosition.xyz - centerPos);
+        float strength = dot(stretchDir, relativeVertexPos);
+        float invAbsStrength = min(0., abs(strength) - 1.);
+        strength = rotationVelocity * sign(strength) * abs(invAbsStrength * invAbsStrength * invAbsStrength + 1.);
+        worldPosition.xyz += stretchDir * strength;
+    }
+
     worldPosition.xyz = radius * normalize(worldPosition.xyz);
 
     gl_Position = uProjectionMatrix * uViewMatrix * worldPosition;
 
-    vAlpha = smoothstep(0.4, 1., normalize(worldPosition.xyz).z) * .9 + .1;
+    vAlpha = smoothstep(0.5, 1., normalize(worldPosition.xyz).z) * .9 + .1;
     vUvs = aModelUvs;
     vInstanceId = gl_InstanceID;
 }
@@ -291,8 +70,17 @@ void main() {
     vec2 cellSize = vec2(1.0) / vec2(float(cellsPerRow));
     vec2 cellOffset = vec2(float(cellX), float(cellY)) * cellSize;
 
-    // Direct mapping since atlas is already "cover" scaled
+    ivec2 texSize = textureSize(uTex, 0);
+    float imageAspect = float(texSize.x) / float(texSize.y);
+    float containerAspect = 1.0;
+    
+    float scale = max(imageAspect / containerAspect, 
+                     containerAspect / imageAspect);
+    
     vec2 st = vec2(vUvs.x, 1.0 - vUvs.y);
+    st = (st - 0.5) * scale + 0.5;
+    
+    st = clamp(st, 0.0, 1.0);
     st = st * cellSize + cellOffset;
     
     outColor = texture(uTex, st);
@@ -535,28 +323,334 @@ class IcosahedronGeometry extends Geometry {
   }
 }
 
-class PlaneGeometry extends Geometry {
-  constructor(width = 1, height = 1) {
+class DiscGeometry extends Geometry {
+  constructor(steps = 4, radius = 1) {
     super();
-    const w2 = width / 2;
-    const h2 = height / 2;
+    const safeSteps = Math.max(4, steps);
+    const alpha = (2 * Math.PI) / safeSteps;
 
-    this.addVertex(-w2, h2, 0);  // 0: TL
-    this.addVertex(w2, h2, 0);   // 1: TR
-    this.addVertex(-w2, -h2, 0); // 2: BL
-    this.addVertex(w2, -h2, 0);  // 3: BR
+    this.addVertex(0, 0, 0);
+    this.lastVertex.uv[0] = 0.5;
+    this.lastVertex.uv[1] = 0.5;
 
-    this.vertices[0].uv[0] = 0; this.vertices[0].uv[1] = 1;
-    this.vertices[1].uv[0] = 1; this.vertices[1].uv[1] = 1;
-    this.vertices[2].uv[0] = 0; this.vertices[2].uv[1] = 0;
-    this.vertices[3].uv[0] = 1; this.vertices[3].uv[1] = 0;
+    for (let i = 0; i < safeSteps; ++i) {
+      const x = Math.cos(alpha * i);
+      const y = Math.sin(alpha * i);
+      this.addVertex(radius * x, radius * y, 0);
+      this.lastVertex.uv[0] = x * 0.5 + 0.5;
+      this.lastVertex.uv[1] = y * 0.5 + 0.5;
 
-    this.addFace(0, 2, 1);
-    this.addFace(1, 2, 3);
+      if (i > 0) {
+        this.addFace(0, i, i + 1);
+      }
+    }
+    this.addFace(0, safeSteps, 1);
   }
 }
 
-export class InfiniteGridMenu {
+function createShader(gl: WebGL2RenderingContext, type: number, source: string): WebGLShader | null {
+  const shader = gl.createShader(type);
+  if (!shader) return null;
+  gl.shaderSource(shader, source);
+  gl.compileShader(shader);
+  const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+
+  if (success) {
+    return shader;
+  }
+
+  console.error(gl.getShaderInfoLog(shader));
+  gl.deleteShader(shader);
+  return null;
+}
+
+function createProgram(
+  gl: WebGL2RenderingContext,
+  shaderSources: [string, string],
+  transformFeedbackVaryings?: string[] | null,
+  attribLocations?: Record<string, number>
+): WebGLProgram | null {
+  const program = gl.createProgram();
+  if (!program) return null;
+
+  [gl.VERTEX_SHADER, gl.FRAGMENT_SHADER].forEach((type, ndx) => {
+    const shader = createShader(gl, type, shaderSources[ndx]);
+    if (shader) {
+      gl.attachShader(program, shader);
+    }
+  });
+
+  if (transformFeedbackVaryings) {
+    gl.transformFeedbackVaryings(program, transformFeedbackVaryings, gl.SEPARATE_ATTRIBS);
+  }
+
+  if (attribLocations) {
+    for (const attrib in attribLocations) {
+      if (Object.prototype.hasOwnProperty.call(attribLocations, attrib)) {
+        gl.bindAttribLocation(program, attribLocations[attrib], attrib);
+      }
+    }
+  }
+
+  gl.linkProgram(program);
+  const success = gl.getProgramParameter(program, gl.LINK_STATUS);
+
+  if (success) {
+    return program;
+  }
+
+  console.error(gl.getProgramInfoLog(program));
+  gl.deleteProgram(program);
+  return null;
+}
+
+function makeVertexArray(
+  gl: WebGL2RenderingContext,
+  bufLocNumElmPairs: Array<[WebGLBuffer, number, number]>,
+  indices?: Uint16Array
+): WebGLVertexArrayObject | null {
+  const va = gl.createVertexArray();
+  if (!va) return null;
+
+  gl.bindVertexArray(va);
+
+  for (const [buffer, loc, numElem] of bufLocNumElmPairs) {
+    if (loc === -1) continue;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, numElem, gl.FLOAT, false, 0, 0);
+  }
+
+  if (indices) {
+    const indexBuffer = gl.createBuffer();
+    if (indexBuffer) {
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
+    }
+  }
+
+  gl.bindVertexArray(null);
+  return va;
+}
+
+function resizeCanvasToDisplaySize(canvas: HTMLCanvasElement): boolean {
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const displayWidth = Math.round(canvas.clientWidth * dpr);
+  const displayHeight = Math.round(canvas.clientHeight * dpr);
+  const needResize = canvas.width !== displayWidth || canvas.height !== displayHeight;
+  if (needResize) {
+    canvas.width = displayWidth;
+    canvas.height = displayHeight;
+  }
+  return needResize;
+}
+
+function makeBuffer(gl: WebGL2RenderingContext, sizeOrData: number | ArrayBufferView, usage: number): WebGLBuffer {
+  const buf = gl.createBuffer();
+  if (!buf) {
+    throw new Error('Failed to create WebGL buffer.');
+  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+
+  if (typeof sizeOrData === 'number') {
+    gl.bufferData(gl.ARRAY_BUFFER, sizeOrData, usage);
+  } else {
+    gl.bufferData(gl.ARRAY_BUFFER, sizeOrData, usage);
+  }
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  return buf;
+}
+
+function createAndSetupTexture(
+  gl: WebGL2RenderingContext,
+  minFilter: number,
+  magFilter: number,
+  wrapS: number,
+  wrapT: number
+): WebGLTexture {
+  const texture = gl.createTexture();
+  if (!texture) {
+    throw new Error('Failed to create WebGL texture.');
+  }
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapS);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapT);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, minFilter);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, magFilter);
+  return texture;
+}
+
+type UpdateCallback = (deltaTime: number) => void;
+
+class ArcballControl {
+  private canvas: HTMLCanvasElement;
+  private updateCallback: UpdateCallback;
+
+  public isPointerDown = false;
+  public orientation = quat.create();
+  public pointerRotation = quat.create();
+  public rotationVelocity = 0;
+  public rotationAxis = vec3.fromValues(1, 0, 0);
+
+  public snapDirection = vec3.fromValues(0, 0, -1);
+  public snapTargetDirection: vec3 | null = null;
+
+  private pointerPos = vec2.create();
+  private previousPointerPos = vec2.create();
+  private _rotationVelocity = 0;
+  private _combinedQuat = quat.create();
+
+  private readonly EPSILON = 0.1;
+  private readonly IDENTITY_QUAT = quat.create();
+
+  constructor(canvas: HTMLCanvasElement, updateCallback?: UpdateCallback) {
+    this.canvas = canvas;
+    this.updateCallback = updateCallback || (() => undefined);
+
+    canvas.addEventListener('pointerdown', (e: PointerEvent) => {
+      vec2.set(this.pointerPos, e.clientX, e.clientY);
+      vec2.copy(this.previousPointerPos, this.pointerPos);
+      this.isPointerDown = true;
+    });
+    canvas.addEventListener('pointerup', () => {
+      this.isPointerDown = false;
+    });
+    canvas.addEventListener('pointerleave', () => {
+      this.isPointerDown = false;
+    });
+    canvas.addEventListener('pointermove', (e: PointerEvent) => {
+      if (this.isPointerDown) {
+        vec2.set(this.pointerPos, e.clientX, e.clientY);
+      }
+    });
+    canvas.style.touchAction = 'none';
+  }
+
+  public update(deltaTime: number, targetFrameDuration = 16): void {
+    const timeScale = deltaTime / targetFrameDuration + 0.00001;
+    let angleFactor = timeScale;
+    const snapRotation = quat.create();
+
+    if (this.isPointerDown) {
+      const INTENSITY = 0.3 * timeScale;
+      const ANGLE_AMPLIFICATION = 5 / timeScale;
+      const midPointerPos = vec2.sub(vec2.create(), this.pointerPos, this.previousPointerPos);
+      vec2.scale(midPointerPos, midPointerPos, INTENSITY);
+
+      if (vec2.sqrLen(midPointerPos) > this.EPSILON) {
+        vec2.add(midPointerPos, this.previousPointerPos, midPointerPos);
+
+        const p = this.project(midPointerPos);
+        const q = this.project(this.previousPointerPos);
+        const a = vec3.normalize(vec3.create(), p);
+        const b = vec3.normalize(vec3.create(), q);
+
+        vec2.copy(this.previousPointerPos, midPointerPos);
+
+        angleFactor *= ANGLE_AMPLIFICATION;
+
+        this.quatFromVectors(a, b, this.pointerRotation, angleFactor);
+      } else {
+        quat.slerp(this.pointerRotation, this.pointerRotation, this.IDENTITY_QUAT, INTENSITY);
+      }
+    } else {
+      const INTENSITY = 0.1 * timeScale;
+      quat.slerp(this.pointerRotation, this.pointerRotation, this.IDENTITY_QUAT, INTENSITY);
+
+      if (this.snapTargetDirection) {
+        const SNAPPING_INTENSITY = 0.2;
+        const a = this.snapTargetDirection;
+        const b = this.snapDirection;
+        const sqrDist = vec3.squaredDistance(a, b);
+        const distanceFactor = Math.max(0.1, 1 - sqrDist * 10);
+        angleFactor *= SNAPPING_INTENSITY * distanceFactor;
+        this.quatFromVectors(a, b, snapRotation, angleFactor);
+      }
+    }
+
+    const combinedQuat = quat.multiply(quat.create(), snapRotation, this.pointerRotation);
+    this.orientation = quat.multiply(quat.create(), combinedQuat, this.orientation);
+    quat.normalize(this.orientation, this.orientation);
+
+    const RA_INTENSITY = 0.8 * timeScale;
+    quat.slerp(this._combinedQuat, this._combinedQuat, combinedQuat, RA_INTENSITY);
+    quat.normalize(this._combinedQuat, this._combinedQuat);
+
+    const rad = Math.acos(this._combinedQuat[3]) * 2.0;
+    const s = Math.sin(rad / 2.0);
+    let rv = 0;
+    if (s > 0.000001) {
+      rv = rad / (2 * Math.PI);
+      this.rotationAxis[0] = this._combinedQuat[0] / s;
+      this.rotationAxis[1] = this._combinedQuat[1] / s;
+      this.rotationAxis[2] = this._combinedQuat[2] / s;
+    }
+
+    const RV_INTENSITY = 0.5 * timeScale;
+    this._rotationVelocity += (rv - this._rotationVelocity) * RV_INTENSITY;
+    this.rotationVelocity = this._rotationVelocity / timeScale;
+
+    this.updateCallback(deltaTime);
+  }
+
+  private quatFromVectors(a: vec3, b: vec3, out: quat, angleFactor = 1): { q: quat; axis: vec3; angle: number } {
+    const axis = vec3.cross(vec3.create(), a, b);
+    vec3.normalize(axis, axis);
+    const d = Math.max(-1, Math.min(1, vec3.dot(a, b)));
+    const angle = Math.acos(d) * angleFactor;
+    quat.setAxisAngle(out, axis, angle);
+    return { q: out, axis, angle };
+  }
+
+  private project(pos: vec2): vec3 {
+    const r = 2;
+    const w = this.canvas.clientWidth;
+    const h = this.canvas.clientHeight;
+    const s = Math.max(w, h) - 1;
+
+    const x = (2 * pos[0] - w - 1) / s;
+    const y = (2 * pos[1] - h - 1) / s;
+    let z = 0;
+    const xySq = x * x + y * y;
+    const rSq = r * r;
+
+    if (xySq <= rSq / 2.0) {
+      z = Math.sqrt(rSq - xySq);
+    } else {
+      z = rSq / Math.sqrt(xySq);
+    }
+    return vec3.fromValues(-x, y, z);
+  }
+}
+
+export interface MenuItem {
+  image: string;
+  link: string;
+  title: string;
+  description: string;
+}
+
+type ActiveItemCallback = (index: number) => void;
+type MovementChangeCallback = (isMoving: boolean) => void;
+type InitCallback = (instance: InfiniteGridMenu) => void;
+
+interface Camera {
+  matrix: mat4;
+  near: number;
+  far: number;
+  fov: number;
+  aspect: number;
+  position: vec3;
+  up: vec3;
+  matrices: {
+    view: mat4;
+    projection: mat4;
+    inversProjection: mat4;
+  };
+}
+
+class InfiniteGridMenu {
   private gl: WebGL2RenderingContext | null = null;
   private discProgram: WebGLProgram | null = null;
   private discVAO: WebGLVertexArrayObject | null = null;
@@ -567,7 +661,7 @@ export class InfiniteGridMenu {
     uvs: Float32Array;
   };
   private icoGeo!: IcosahedronGeometry;
-  private discGeo!: PlaneGeometry;
+  private discGeo!: DiscGeometry;
   private worldMatrix = mat4.create();
   private tex: WebGLTexture | null = null;
   private control!: ArcballControl;
@@ -610,8 +704,6 @@ export class InfiniteGridMenu {
 
   private TARGET_FRAME_DURATION = 1000 / 60;
   private SPHERE_RADIUS = 2;
-  private animationId: number | null = null;
-  private isDestroyed = false;
 
   public camera: Camera = {
     matrix: mat4.create(),
@@ -644,11 +736,6 @@ export class InfiniteGridMenu {
     this.init(onInit);
   }
 
-  public getNearestItemIndex(): number {
-    const nearestVertexIndex = this.findNearestVertexIndex();
-    return nearestVertexIndex % Math.max(1, this.items.length);
-  }
-
   public resize(): void {
     const needsResize = resizeCanvasToDisplaySize(this.canvas);
     if (!this.gl) return;
@@ -658,25 +745,7 @@ export class InfiniteGridMenu {
     this.updateProjectionMatrix();
   }
 
-  public destroy(): void {
-    this.isDestroyed = true;
-    if (this.animationId !== null) {
-      cancelAnimationFrame(this.animationId);
-      this.animationId = null;
-    }
-    if (this.control) {
-      this.control.destroy();
-    }
-    if (this.gl) {
-      if (this.tex) this.gl.deleteTexture(this.tex);
-      if (this.discVAO) this.gl.deleteVertexArray(this.discVAO);
-      if (this.discProgram) this.gl.deleteProgram(this.discProgram);
-      if (this.discInstances?.buffer) this.gl.deleteBuffer(this.discInstances.buffer);
-    }
-  }
-
   public run(time = 0): void {
-    if (this.isDestroyed) return;
     this._deltaTime = Math.min(32, time - this._time);
     this._time = time;
     this._deltaFrames = this._deltaTime / this.TARGET_FRAME_DURATION;
@@ -685,7 +754,7 @@ export class InfiniteGridMenu {
     this.animate(this._deltaTime);
     this.render();
 
-    this.animationId = requestAnimationFrame(t => this.run(t));
+    requestAnimationFrame(t => this.run(t));
   }
 
   private init(onInit?: InitCallback): void {
@@ -724,7 +793,7 @@ export class InfiniteGridMenu {
       uAtlasSize: gl.getUniformLocation(this.discProgram!, 'uAtlasSize')
     };
 
-    this.discGeo = new PlaneGeometry(1, 1);
+    this.discGeo = new DiscGeometry(56, 1);
     this.discBuffers = this.discGeo.data;
     this.discVAO = makeVertexArray(
       gl,
@@ -780,23 +849,7 @@ export class InfiniteGridMenu {
       images.forEach((img, i) => {
         const x = (i % this.atlasSize) * cellSize;
         const y = Math.floor(i / this.atlasSize) * cellSize;
-        
-        // DRAW AS COVER to prevent squashing
-        const imgAspect = img.width / img.height;
-        let drawW = cellSize;
-        let drawH = cellSize;
-        let offsetX = 0;
-        let offsetY = 0;
-        
-        if (imgAspect > 1) { // Landscape
-          drawW = cellSize * imgAspect;
-          offsetX = -(drawW - cellSize) / 2;
-        } else { // Portrait
-          drawH = cellSize / imgAspect;
-          offsetY = -(drawH - cellSize) / 2;
-        }
-        
-        ctx.drawImage(img, x + offsetX, y + offsetY, drawW, drawH);
+        ctx.drawImage(img, x, y, cellSize, cellSize);
       });
 
       gl.bindTexture(gl.TEXTURE_2D, this.tex);
@@ -925,7 +978,7 @@ export class InfiniteGridMenu {
     if (!this.gl) return;
     const canvasEl = this.gl.canvas as HTMLCanvasElement;
     this.camera.aspect = canvasEl.clientWidth / canvasEl.clientHeight;
-    const height = this.SPHERE_RADIUS * 0.5;
+    const height = this.SPHERE_RADIUS * 0.35;
     const distance = this.camera.position[2];
     if (this.camera.aspect > 1) {
       this.camera.fov = 2 * Math.atan(height / distance);
@@ -1004,23 +1057,23 @@ const defaultItems: MenuItem[] = [
 interface InfiniteMenuProps {
   items?: MenuItem[];
   scale?: number;
-  onDoubleClick?: (item: MenuItem) => void;
 }
 
-export const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0, onDoubleClick }) => {
+export function InfiniteMenu({ items = [], scale = 1.0 }: InfiniteMenuProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null) as MutableRefObject<HTMLCanvasElement | null>;
   const [isMoving, setIsMoving] = useState<boolean>(false);
-  const sketchRef = useRef<InfiniteGridMenu | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    
+    let sketch: InfiniteGridMenu | null = null;
+
     const handleActiveItem = (index: number) => {
-      // Logic for active item
+      // Logic for active item can remain if needed for future, 
+      // but we don't need to update state if nothing uses it.
     };
 
     if (canvas) {
-      sketchRef.current = new InfiniteGridMenu(
+      sketch = new InfiniteGridMenu(
         canvas,
         items.length ? items : defaultItems,
         handleActiveItem,
@@ -1031,30 +1084,18 @@ export const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0, o
     }
 
     const handleResize = () => {
-      if (sketchRef.current) {
-        sketchRef.current.resize();
+      if (sketch) {
+        sketch.resize();
       }
     };
-
-    const handleDoubleClick = () => {
-      if (sketchRef.current && onDoubleClick) {
-        const index = sketchRef.current.getNearestItemIndex();
-        const item = items.length ? items[index] : defaultItems[0];
-        onDoubleClick(item);
-      }
-    };
-
-    canvas?.addEventListener('dblclick', handleDoubleClick);
 
     window.addEventListener('resize', handleResize);
     handleResize();
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      canvas?.removeEventListener('dblclick', handleDoubleClick);
-      sketchRef.current?.destroy();
     };
-  }, [items, scale, onDoubleClick]);
+  }, [items, scale]);
 
   return (
     <div className="relative w-full h-full">
@@ -1065,4 +1106,4 @@ export const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [], scale = 1.0, o
       />
     </div>
   );
-};
+}
