@@ -5,7 +5,19 @@ import { ReactNode } from 'react';
 
 export function LenisProvider({ children }: { children: ReactNode }) {
   return (
-    <ReactLenis root>
+    <ReactLenis 
+      root 
+      options={{
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 1,
+        touchMultiplier: 2,
+        infinite: false,
+      }}
+    >
       {children}
     </ReactLenis>
   );

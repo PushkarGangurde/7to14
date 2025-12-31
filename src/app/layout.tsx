@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { VisualEditsMessenger } from "orchids-visual-edits";
 import { LenisProvider } from "@/components/LenisProvider";
 import SplashCursor from "@/components/SplashCursor";
+import { PageTransition } from "@/components/PageTransition";
+import { TopLoader } from "@/components/TopLoader";
 
 import { AuroraGradient } from "@/components/AuroraGradient";
 
@@ -28,11 +30,14 @@ export default function RootLayout({
   return (
       <html lang="en">
         <body className={`${fredoka.variable} antialiased min-h-screen font-sans`}>
+          <TopLoader />
           <AuroraGradient />
           <LenisProvider>
-          <main className="pb-24">
-            {children}
-          </main>
+          <PageTransition>
+            <main className="pb-24">
+              {children}
+            </main>
+          </PageTransition>
           <Navbar />
           <Toaster position="top-center" />
           <VisualEditsMessenger />

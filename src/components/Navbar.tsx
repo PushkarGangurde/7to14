@@ -34,21 +34,27 @@ export function Navbar() {
                   isActive ? "text-white" : "text-slate-500 hover:text-white"
                 )}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="nav-active"
-                    className="absolute inset-0 bg-white/10 rounded-xl"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                <motion.div
+                  whileTap={{ scale: 0.9 }}
+                  className="flex flex-col items-center"
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="nav-active"
+                      className="absolute inset-0 bg-white/10 rounded-xl"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  <Icon 
+                    size={20} 
+                    className="mb-1" 
+                    stroke={isActive ? "url(#aurora-gradient)" : "currentColor"} 
                   />
-                )}
-                <Icon 
-                  size={20} 
-                  className="mb-1" 
-                  stroke={isActive ? "url(#aurora-gradient)" : "currentColor"} 
-                />
-                <span className="text-[10px] font-medium uppercase tracking-wider">{item.label}</span>
+                  <span className="text-[10px] font-medium uppercase tracking-wider">{item.label}</span>
+                </motion.div>
               </Link>
             );
+
         })}
       </nav>
     </div>
