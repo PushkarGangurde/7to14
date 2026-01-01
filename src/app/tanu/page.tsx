@@ -173,11 +173,25 @@ export default function TanuPage() {
                 <p className="text-white/40 text-sm mt-4">- From Kichku</p>
               </div>
               <div className="flex gap-2">
-                <div className="w-16 h-20 rounded-lg bg-white/5 border border-white/10 rotate-[-5deg]"></div>
-                <div className="w-16 h-20 rounded-lg bg-white/5 border border-white/10 rotate-[3deg] -ml-4"></div>
-                <div className="w-16 h-20 rounded-lg bg-white/5 border border-white/10 rotate-[-2deg] -ml-4"></div>
+                <div className="w-16 h-20 rounded-lg bg-cover bg-center border border-white/10 rotate-[-5deg]" style={{ backgroundImage: 'url(/images/tanu-1.jpeg)' }}></div>
+                <div className="w-16 h-20 rounded-lg bg-cover bg-center border border-white/10 rotate-[3deg] -ml-4" style={{ backgroundImage: 'url(/images/tanu-2.jpeg)' }}></div>
+                <div className="w-16 h-20 rounded-lg bg-cover bg-center border border-white/10 rotate-[-2deg] -ml-4" style={{ backgroundImage: 'url(/images/tanu-3.jpeg)' }}></div>
               </div>
             </div>
+          </BentoCard>
+
+          <BentoCard className="lg:col-span-4 p-8 min-h-[120px] flex flex-col items-center justify-center text-center">
+            <p className="text-white/80 text-lg italic leading-relaxed mb-4">
+              "Never forget your first; it will always be a source of nostalgia"
+            </p>
+            <a 
+              href="https://aarohibachhav.nicepage.io/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-transparent bg-clip-text bg-gradient-to-r from-[#14e818] via-[#017ed5] to-[#b53dff] hover:underline text-sm"
+            >
+              aarohibachhav.nicepage.io
+            </a>
           </BentoCard>
         </div>
         </MagicBento>

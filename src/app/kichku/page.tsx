@@ -172,11 +172,11 @@ export default function KichkuPage() {
                 </p>
                 <p className="text-white/40 text-sm mt-4">- From Tanu</p>
               </div>
-              <div className="flex gap-2">
-                <div className="w-16 h-20 rounded-lg bg-white/5 border border-white/10 rotate-[-5deg]"></div>
-                <div className="w-16 h-20 rounded-lg bg-white/5 border border-white/10 rotate-[3deg] -ml-4"></div>
-                <div className="w-16 h-20 rounded-lg bg-white/5 border border-white/10 rotate-[-2deg] -ml-4"></div>
-              </div>
+<div className="flex gap-2">
+                  <div className="w-16 h-20 rounded-lg bg-cover bg-center border border-white/10 rotate-[-5deg]" style={{ backgroundImage: 'url(/images/kichku-1.jpeg)' }}></div>
+                  <div className="w-16 h-20 rounded-lg bg-cover bg-center border border-white/10 rotate-[3deg] -ml-4" style={{ backgroundImage: 'url(/images/kichku-2.jpeg)' }}></div>
+                  <div className="w-16 h-20 rounded-lg bg-cover bg-center border border-white/10 rotate-[-2deg] -ml-4" style={{ backgroundImage: 'url(/images/kichku-3.jpeg)' }}></div>
+                </div>
             </div>
           </BentoCard>
         </div>
