@@ -67,7 +67,7 @@ export default function MemoriesPage() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [fullscreenPhoto, setFullscreenPhoto] = useState<string | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   // Admin Dialog State
   const [showAdminDialog, setShowAdminDialog] = useState(false);
@@ -155,6 +155,20 @@ export default function MemoriesPage() {
     }
   };
 
+  const handleDelete = async (photo: Photo) => {
+    if (!window.confirm('Are you sure you want to delete this memory?')) return;
+    
+    try {
+      await deletePhoto(photo.id, photo.url);
+      toast.success('Memory deleted');
+      setSelectedPhoto(null);
+      fetchPhotos();
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to delete memory');
+    }
+  };
+
   // Map real photos to MenuItem format if available
   const menuItems: MenuItem[] = photos.length > 0 
     ? photos.map(p => ({
@@ -177,7 +191,11 @@ export default function MemoriesPage() {
           <InfiniteMenu 
             items={menuItems} 
             scale={2} 
-            onItemDoubleClick={(index) => setFullscreenPhoto(menuItems[index].image)}
+            onItemDoubleClick={(index) => {
+              if (photos.length > 0) {
+                setSelectedPhoto(photos[index]);
+              }
+            }}
           />
         )}
       </div>
@@ -231,9 +249,7 @@ export default function MemoriesPage() {
               </DialogContent>
             </Dialog>
             <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-slate-500 hover:text-red-400"
+              className="rounded-full bg-white/10 backdrop-blur-md text-white/70 hover:text-white hover:bg-white/20 shadow-lg px-6 h-10 border border-white/10 text-xs uppercase tracking-widest font-medium"
               onClick={() => {
                 localStorage.removeItem('is_admin');
                 setIsAdmin(false);
@@ -277,31 +293,40 @@ export default function MemoriesPage() {
 
       {/* Fullscreen Image Overlay */}
       <AnimatePresence>
-        {fullscreenPhoto && (
+        {selectedPhoto && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4"
-            onClick={() => setFullscreenPhoto(null)}
+            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
+            onClick={() => setSelectedPhoto(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="relative max-w-full max-h-full"
+              className="relative"
+              onClick={(e) => e.stopPropagation()}
             >
               <img 
-                src={fullscreenPhoto} 
+                src={selectedPhoto.url} 
                 alt="Fullscreen" 
-                className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+                className="max-w-[95vw] max-h-[95vh] object-contain rounded-lg shadow-2xl"
               />
               <button 
-                className="absolute -top-12 right-0 text-white/50 hover:text-white transition-colors"
-                onClick={() => setFullscreenPhoto(null)}
+                className="absolute top-3 right-3 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white/80 hover:text-white transition-all backdrop-blur-sm"
+                onClick={() => setSelectedPhoto(null)}
               >
-                <X size={32} />
+                <X size={24} />
               </button>
+              {isAdmin && (
+                <button 
+                  className="absolute bottom-3 right-3 p-3 bg-red-500/70 hover:bg-red-600 rounded-full text-white transition-all backdrop-blur-sm"
+                  onClick={() => handleDelete(selectedPhoto)}
+                >
+                  <Trash2 size={22} />
+                </button>
+              )}
             </motion.div>
           </motion.div>
         )}
