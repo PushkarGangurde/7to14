@@ -12,7 +12,7 @@ export interface BentoCardProps {
   disableAnimations?: boolean;
   className?: string;
   children?: React.ReactNode;
-  span?: string; // e.g., "col-span-2 row-span-2"
+  backgroundImage?: string;
 }
 
 export interface BentoProps {
@@ -28,25 +28,25 @@ export interface BentoProps {
   clickEffect?: boolean;
   enableMagnetism?: boolean;
   children?: React.ReactNode;
-  className?: string;
 }
 
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
-const DEFAULT_GLOW_COLOR = '132, 0, 255'; // Purple
-const AURORA_GLOW_COLOR = '181, 61, 255'; // More towards aurora purple
+const DEFAULT_GLOW_COLOR = '20, 232, 24';
+const AURORA_GRADIENT_COLORS = ['20, 232, 24', '1, 126, 213', '181, 61, 255'];
 const MOBILE_BREAKPOINT = 768;
 
 const createParticleElement = (x: number, y: number, color: string = DEFAULT_GLOW_COLOR): HTMLDivElement => {
   const el = document.createElement('div');
   el.className = 'particle';
+  const randomColor = AURORA_GRADIENT_COLORS[Math.floor(Math.random() * AURORA_GRADIENT_COLORS.length)];
   el.style.cssText = `
     position: absolute;
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    background: rgba(${color}, 1);
-    box-shadow: 0 0 6px rgba(${color}, 0.6);
+    background: rgba(${randomColor}, 1);
+    box-shadow: 0 0 6px rgba(${randomColor}, 0.6);
     pointer-events: none;
     z-index: 100;
     left: ${x}px;
@@ -71,7 +71,7 @@ const updateCardGlowProperties = (card: HTMLElement, mouseX: number, mouseY: num
   card.style.setProperty('--glow-radius', `${radius}px`);
 };
 
-export const ParticleCard: React.FC<{
+export const BentoCard: React.FC<{
   children: React.ReactNode;
   className?: string;
   disableAnimations?: boolean;
@@ -81,6 +81,9 @@ export const ParticleCard: React.FC<{
   enableTilt?: boolean;
   clickEffect?: boolean;
   enableMagnetism?: boolean;
+  enableStars?: boolean;
+  enableBorderGlow?: boolean;
+  backgroundImage?: string;
 }> = ({
   children,
   className = '',
@@ -89,8 +92,11 @@ export const ParticleCard: React.FC<{
   particleCount = DEFAULT_PARTICLE_COUNT,
   glowColor = DEFAULT_GLOW_COLOR,
   enableTilt = true,
-  clickEffect = false,
-  enableMagnetism = false
+  clickEffect = true,
+  enableMagnetism = true,
+  enableStars = true,
+  enableBorderGlow = true,
+  backgroundImage
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement[]>([]);
@@ -130,7 +136,7 @@ export const ParticleCard: React.FC<{
   }, []);
 
   const animateParticles = useCallback(() => {
-    if (!cardRef.current || !isHoveredRef.current) return;
+    if (!cardRef.current || !isHoveredRef.current || !enableStars) return;
 
     if (!particlesInitialized.current) {
       initializeParticles();
@@ -165,9 +171,9 @@ export const ParticleCard: React.FC<{
         });
       }, index * 100);
 
-      timeoutsRef.current.push(timeoutId);
+      timeoutsRef.current.push(timeoutId as unknown as number);
     });
-  }, [initializeParticles]);
+  }, [initializeParticles, enableStars]);
 
   useEffect(() => {
     if (disableAnimations || !cardRef.current) return;
@@ -262,12 +268,13 @@ export const ParticleCard: React.FC<{
       );
 
       const ripple = document.createElement('div');
+      const randomColor = AURORA_GRADIENT_COLORS[Math.floor(Math.random() * AURORA_GRADIENT_COLORS.length)];
       ripple.style.cssText = `
         position: absolute;
         width: ${maxDistance * 2}px;
         height: ${maxDistance * 2}px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(${glowColor}, 0.4) 0%, rgba(${glowColor}, 0.2) 30%, transparent 70%);
+        background: radial-gradient(circle, rgba(${randomColor}, 0.4) 0%, rgba(${randomColor}, 0.2) 30%, transparent 70%);
         left: ${x - maxDistance}px;
         top: ${y - maxDistance}px;
         pointer-events: none;
@@ -305,13 +312,24 @@ export const ParticleCard: React.FC<{
       element.removeEventListener('click', handleClick);
       clearAllParticles();
     };
-  }, [animateParticles, clearAllParticles, disableAnimations, enableTilt, enableMagnetism, clickEffect, glowColor]);
+  }, [animateParticles, clearAllParticles, disableAnimations, enableTilt, enableMagnetism, clickEffect]);
+
+  const cardStyle: React.CSSProperties = {
+    ...style,
+    position: 'relative',
+    overflow: 'hidden',
+    ...(backgroundImage && {
+      backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url(${backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+    })
+  };
 
   return (
     <div
       ref={cardRef}
-      className={`${className} relative overflow-hidden`}
-      style={{ ...style, position: 'relative', overflow: 'hidden' }}
+      className={`card ${enableBorderGlow ? 'card--border-glow' : ''} ${className} relative overflow-hidden`}
+      style={cardStyle}
     >
       {children}
     </div>
@@ -323,13 +341,11 @@ const GlobalSpotlight: React.FC<{
   disableAnimations?: boolean;
   enabled?: boolean;
   spotlightRadius?: number;
-  glowColor?: string;
 }> = ({
   gridRef,
   disableAnimations = false,
   enabled = true,
-  spotlightRadius = DEFAULT_SPOTLIGHT_RADIUS,
-  glowColor = DEFAULT_GLOW_COLOR
+  spotlightRadius = DEFAULT_SPOTLIGHT_RADIUS
 }) => {
   const spotlightRef = useRef<HTMLDivElement | null>(null);
   const isInsideSection = useRef(false);
@@ -346,11 +362,10 @@ const GlobalSpotlight: React.FC<{
       border-radius: 50%;
       pointer-events: none;
       background: radial-gradient(circle,
-        rgba(${glowColor}, 0.15) 0%,
-        rgba(${glowColor}, 0.08) 15%,
-        rgba(${glowColor}, 0.04) 25%,
-        rgba(${glowColor}, 0.02) 40%,
-        rgba(${glowColor}, 0.01) 65%,
+        rgba(20, 232, 24, 0.12) 0%,
+        rgba(1, 126, 213, 0.08) 20%,
+        rgba(181, 61, 255, 0.06) 40%,
+        rgba(181, 61, 255, 0.02) 60%,
         transparent 70%
       );
       z-index: 200;
@@ -451,23 +466,10 @@ const GlobalSpotlight: React.FC<{
       document.removeEventListener('mouseleave', handleMouseLeave);
       spotlightRef.current?.parentNode?.removeChild(spotlightRef.current);
     };
-  }, [gridRef, disableAnimations, enabled, spotlightRadius, glowColor]);
+  }, [gridRef, disableAnimations, enabled, spotlightRadius]);
 
   return null;
 };
-
-const BentoCardGrid: React.FC<{
-  children: React.ReactNode;
-  gridRef?: React.RefObject<HTMLDivElement | null>;
-  className?: string;
-}> = ({ children, gridRef, className = '' }) => (
-  <div
-    className={`bento-section grid gap-2 p-3 w-full select-none relative ${className}`}
-    ref={gridRef}
-  >
-    {children}
-  </div>
-);
 
 const useMobileDetection = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -484,118 +486,11 @@ const useMobileDetection = () => {
   return isMobile;
 };
 
-export const BentoCard: React.FC<BentoCardProps & { 
-  enableStars?: boolean;
-  enableBorderGlow?: boolean;
-  shouldDisableAnimations?: boolean;
-  particleCount?: number;
-  glowColor?: string;
-  enableTilt?: boolean;
-  clickEffect?: boolean;
-  enableMagnetism?: boolean;
-}> = ({
-  color,
-  title,
-  description,
-  label,
-  textAutoHide,
-  className = '',
-  children,
-  span = '',
-  enableStars,
-  enableBorderGlow,
-  shouldDisableAnimations,
-  particleCount,
-  glowColor,
-  enableTilt,
-  clickEffect,
-  enableMagnetism
-}) => {
-  const baseClassName = `card flex flex-col justify-between relative w-full p-5 rounded-[20px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] ${
-    enableBorderGlow ? 'card--border-glow' : ''
-  } ${span} ${className}`;
-
-  const cardStyle = {
-    backgroundColor: color || 'var(--background-dark)',
-    borderColor: 'var(--border-color)',
-    color: 'var(--white)',
-    '--glow-x': '50%',
-    '--glow-y': '50%',
-    '--glow-intensity': '0',
-    '--glow-radius': '200px'
-  } as React.CSSProperties;
-
-  if (enableStars) {
-    return (
-      <ParticleCard
-        className={baseClassName}
-        style={cardStyle}
-        disableAnimations={shouldDisableAnimations}
-        particleCount={particleCount}
-        glowColor={glowColor}
-        enableTilt={enableTilt}
-        clickEffect={clickEffect}
-        enableMagnetism={enableMagnetism}
-      >
-        {children || (
-          <>
-            <div className="card__header flex justify-between gap-3 relative text-white">
-              <span className="card__label text-base">{label}</span>
-            </div>
-            <div className="card__content flex flex-col relative text-white">
-              <h3 className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? 'truncate' : ''}`}>
-                {title}
-              </h3>
-              <p
-                className={`card__description text-xs leading-5 opacity-90 ${textAutoHide ? 'line-clamp-2' : ''}`}
-              >
-                {description}
-              </p>
-            </div>
-          </>
-        )}
-      </ParticleCard>
-    );
-  }
-
-  return (
-    <div
-      className={baseClassName}
-      style={cardStyle}
-    >
-      {children || (
-        <>
-          <div className="card__header flex justify-between gap-3 relative text-white">
-            <span className="card__label text-base">{label}</span>
-          </div>
-          <div className="card__content flex flex-col relative text-white">
-            <h3 className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? 'truncate' : ''}`}>
-              {title}
-            </h3>
-            <p className={`card__description text-xs leading-5 opacity-90 ${textAutoHide ? 'line-clamp-2' : ''}`}>
-              {description}
-            </p>
-          </div>
-        </>
-      )}
-    </div>
-  );
-};
-
 const MagicBento: React.FC<BentoProps> = ({
-  textAutoHide = true,
-  enableStars = true,
   enableSpotlight = true,
-  enableBorderGlow = true,
   disableAnimations = false,
   spotlightRadius = DEFAULT_SPOTLIGHT_RADIUS,
-  particleCount = DEFAULT_PARTICLE_COUNT,
-  enableTilt = false,
-  glowColor = AURORA_GLOW_COLOR, // Use aurora purple by default
-  clickEffect = true,
-  enableMagnetism = true,
-  children,
-  className = ''
+  children
 }) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const isMobile = useMobileDetection();
@@ -610,21 +505,34 @@ const MagicBento: React.FC<BentoProps> = ({
             --glow-y: 50%;
             --glow-intensity: 0;
             --glow-radius: 200px;
-            --glow-color: ${glowColor};
             --border-color: rgba(255, 255, 255, 0.1);
-            --background-dark: rgba(255, 255, 255, 0.05);
+            --background-dark: #060010;
             --white: hsl(0, 0%, 100%);
+          }
+          
+          .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+          }
+          
+          .card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
           }
           
           .card--border-glow::after {
             content: '';
             position: absolute;
             inset: 0;
-            padding: 1px;
+            padding: 2px;
             background: radial-gradient(var(--glow-radius) circle at var(--glow-x) var(--glow-y),
-                rgba(${glowColor}, calc(var(--glow-intensity) * 0.8)) 0%,
-                rgba(${glowColor}, calc(var(--glow-intensity) * 0.4)) 30%,
-                transparent 60%);
+                rgba(20, 232, 24, calc(var(--glow-intensity) * 0.6)) 0%,
+                rgba(1, 126, 213, calc(var(--glow-intensity) * 0.4)) 25%,
+                rgba(181, 61, 255, calc(var(--glow-intensity) * 0.3)) 50%,
+                transparent 70%);
             border-radius: inherit;
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
@@ -636,17 +544,15 @@ const MagicBento: React.FC<BentoProps> = ({
             z-index: 1;
           }
           
-          .card:hover::after {
-             background: radial-gradient(var(--glow-radius) circle at var(--glow-x) var(--glow-y),
-                rgba(20, 232, 24, 0.4) 0%,
-                rgba(1, 126, 213, 0.4) 33%,
-                rgba(181, 61, 255, 0.4) 66%,
-                transparent 100%);
+          .card--border-glow:hover::after {
+            opacity: 1;
           }
           
-          .card:hover {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 30px rgba(${glowColor}, 0.2);
-            border-color: rgba(255, 255, 255, 0.2);
+          .card--border-glow:hover {
+            box-shadow: 
+              0 4px 20px rgba(20, 232, 24, 0.1),
+              0 0 40px rgba(1, 126, 213, 0.08),
+              0 0 60px rgba(181, 61, 255, 0.05);
           }
           
           .particle::before {
@@ -656,7 +562,7 @@ const MagicBento: React.FC<BentoProps> = ({
             left: -2px;
             right: -2px;
             bottom: -2px;
-            background: rgba(${glowColor}, 0.2);
+            background: rgba(20, 232, 24, 0.2);
             border-radius: 50%;
             z-index: -1;
           }
@@ -669,28 +575,15 @@ const MagicBento: React.FC<BentoProps> = ({
           disableAnimations={shouldDisableAnimations}
           enabled={enableSpotlight}
           spotlightRadius={spotlightRadius}
-          glowColor={glowColor}
         />
       )}
 
-      <BentoCardGrid gridRef={gridRef} className={className}>
-        {React.Children.map(children, child => {
-          if (React.isValidElement(child)) {
-            return React.cloneElement(child as React.ReactElement<any>, {
-              enableStars,
-              enableBorderGlow,
-              shouldDisableAnimations,
-              particleCount,
-              glowColor,
-              enableTilt,
-              clickEffect,
-              enableMagnetism,
-              textAutoHide
-            });
-          }
-          return child;
-        })}
-      </BentoCardGrid>
+      <div
+        className="bento-section w-full max-w-6xl mx-auto px-4 select-none relative"
+        ref={gridRef}
+      >
+        {children}
+      </div>
     </>
   );
 };

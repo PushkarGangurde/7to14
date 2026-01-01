@@ -1,36 +1,182 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Heart, Sparkles, Clock } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Heart, Cake, Music, Utensils, MapPin, Film, Car, CloudSun } from 'lucide-react';
+import RotatingText from '@/components/RotatingText';
+import MagicBento, { BentoCard } from '@/components/MagicBento';
 
 export default function TanuPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center space-y-8 bg-black">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-20 h-20 glass rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(20,232,24,0.3)]"
-        >
-          <Heart stroke="url(#aurora-gradient)" size={40} />
-        </motion.div>
-        
-        <div className="space-y-4">
-          <h1 className="text-4xl font-sans text-white">Tanu's Space</h1>
-          <p className="text-slate-400 max-w-md mx-auto">
-            A dedicated corner for her thoughts, dreams, and favorite things. Coming soon...
-          </p>
-        </div>
+    <div className="min-h-screen bg-black py-12 px-4">
+      <svg width="0" height="0">
+        <defs>
+          <linearGradient id="aurora-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#14e818" />
+            <stop offset="50%" stopColor="#017ed5" />
+            <stop offset="100%" stopColor="#b53dff" />
+          </linearGradient>
+        </defs>
+      </svg>
 
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="relative"
-        >
-          <Clock stroke="url(#aurora-gradient)" className="opacity-10" size={200} />
-          <div className="absolute inset-0 flex items-center justify-center">
-             <Sparkles stroke="url(#aurora-gradient)" size={32} />
-          </div>
-        </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-center mb-12"
+      >
+        <h1 className="text-4xl md:text-5xl font-bold text-white flex items-center justify-center gap-3 flex-wrap">
+          <span>Den of</span>
+          <RotatingText
+            texts={['Tanu', 'Aarohi', 'Ovi', 'Van 83']}
+            mainClassName="px-3 py-1 bg-gradient-to-r from-[#14e818] via-[#017ed5] to-[#b53dff] text-black rounded-lg overflow-hidden"
+            staggerFrom="last"
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '-120%' }}
+            staggerDuration={0.025}
+            splitLevelClassName="overflow-hidden pb-1"
+            transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+            rotationInterval={2000}
+          />
+        </h1>
+      </motion.div>
+
+      <MagicBento
+        enableStars={true}
+        enableSpotlight={true}
+        enableBorderGlow={true}
+        enableTilt={true}
+        enableMagnetism={true}
+        clickEffect={true}
+        spotlightRadius={300}
+        particleCount={12}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <BentoCard className="lg:col-span-2 lg:row-span-2 p-6 min-h-[300px] flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-white/60 text-sm">
+              <Heart size={16} stroke="url(#aurora-gradient)" />
+              <span>Profile</span>
+            </div>
+            <div className="flex-1 flex flex-col items-center justify-center">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#14e818] via-[#017ed5] to-[#b53dff] p-[2px] mb-4">
+                <div className="w-full h-full rounded-full bg-black/80 flex items-center justify-center text-3xl">
+                  👸
+                </div>
+              </div>
+              <h2 className="text-2xl font-bold text-white">Tanu</h2>
+              <p className="text-white/50 text-sm mt-1">The Queen of Everything</p>
+            </div>
+          </BentoCard>
+
+          <BentoCard className="lg:col-span-2 p-6 min-h-[140px] flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-white/60 text-sm">
+              <Cake size={16} stroke="url(#aurora-gradient)" />
+              <span>Birthday Countdown</span>
+            </div>
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <p className="text-4xl font-bold text-gradient">-- Days</p>
+                <p className="text-white/50 text-sm mt-1">Until your special day</p>
+              </div>
+            </div>
+          </BentoCard>
+
+          <BentoCard className="lg:col-span-2 p-6 min-h-[140px] flex flex-col justify-between">
+            <div className="flex items-center gap-2 text-white/60 text-sm">
+              <Music size={16} stroke="url(#aurora-gradient)" />
+              <span>Our Song</span>
+            </div>
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-white/70 text-center">Spotify embed placeholder</p>
+            </div>
+          </BentoCard>
+
+          <BentoCard 
+            className="p-6 min-h-[180px] flex flex-col justify-between"
+            backgroundImage="/placeholder-food.jpg"
+          >
+            <div className="flex items-center gap-2 text-white/80 text-sm">
+              <Utensils size={16} />
+              <span>Favorite Food</span>
+            </div>
+            <div className="mt-auto">
+              <p className="text-white font-semibold">Coming Soon</p>
+            </div>
+          </BentoCard>
+
+          <BentoCard 
+            className="p-6 min-h-[180px] flex flex-col justify-between"
+            backgroundImage="/placeholder-weather.jpg"
+          >
+            <div className="flex items-center gap-2 text-white/80 text-sm">
+              <CloudSun size={16} />
+              <span>Favorite Weather</span>
+            </div>
+            <div className="mt-auto">
+              <p className="text-white font-semibold">Coming Soon</p>
+            </div>
+          </BentoCard>
+
+          <BentoCard 
+            className="p-6 min-h-[180px] flex flex-col justify-between"
+            backgroundImage="/placeholder-travel.jpg"
+          >
+            <div className="flex items-center gap-2 text-white/80 text-sm">
+              <MapPin size={16} />
+              <span>Favorite Travel</span>
+            </div>
+            <div className="mt-auto">
+              <p className="text-white font-semibold">Coming Soon</p>
+            </div>
+          </BentoCard>
+
+          <BentoCard 
+            className="p-6 min-h-[180px] flex flex-col justify-between"
+            backgroundImage="/placeholder-movie.jpg"
+          >
+            <div className="flex items-center gap-2 text-white/80 text-sm">
+              <Film size={16} />
+              <span>Favorite Movie</span>
+            </div>
+            <div className="mt-auto">
+              <p className="text-white font-semibold">Coming Soon</p>
+            </div>
+          </BentoCard>
+
+          <BentoCard 
+            className="p-6 min-h-[180px] flex flex-col justify-between"
+            backgroundImage="/placeholder-car.jpg"
+          >
+            <div className="flex items-center gap-2 text-white/80 text-sm">
+              <Car size={16} />
+              <span>Favorite Car</span>
+            </div>
+            <div className="mt-auto">
+              <p className="text-white font-semibold">Coming Soon</p>
+            </div>
+          </BentoCard>
+
+          <BentoCard className="lg:col-span-4 p-8 min-h-[200px] flex flex-col">
+            <div className="flex items-center gap-2 text-white/60 text-sm mb-4">
+              <Heart size={16} stroke="url(#aurora-gradient)" />
+              <span>Partner's Note</span>
+            </div>
+            <div className="flex-1 flex flex-col md:flex-row items-center gap-6">
+              <div className="flex-1">
+                <p className="text-white/80 text-lg italic leading-relaxed">
+                  "A heartfelt note from your partner will appear here..."
+                </p>
+                <p className="text-white/40 text-sm mt-4">- From Kichku 💜</p>
+              </div>
+              <div className="flex gap-2">
+                <div className="w-16 h-20 rounded-lg bg-white/5 border border-white/10 rotate-[-5deg]"></div>
+                <div className="w-16 h-20 rounded-lg bg-white/5 border border-white/10 rotate-[3deg] -ml-4"></div>
+                <div className="w-16 h-20 rounded-lg bg-white/5 border border-white/10 rotate-[-2deg] -ml-4"></div>
+              </div>
+            </div>
+          </BentoCard>
+        </div>
+      </MagicBento>
     </div>
   );
 }
