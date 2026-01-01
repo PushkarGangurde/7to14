@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Image as ImageIcon, X, Upload, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/Loader';
@@ -170,14 +170,14 @@ export default function MemoriesPage() {
   };
 
   // Map real photos to MenuItem format if available
-  const menuItems: MenuItem[] = photos.length > 0 
+  const menuItems: MenuItem[] = useMemo(() => photos.length > 0 
     ? photos.map(p => ({
         image: p.url,
         link: '#',
         title: `${p.month} ${p.year}`,
         description: 'A captured moment'
       }))
-    : tempItems;
+    : tempItems, [photos]);
 
   return (
     <div className="fixed inset-0 bg-black overflow-hidden select-none">
@@ -321,7 +321,7 @@ export default function MemoriesPage() {
               </button>
               {isAdmin && (
                 <button 
-                  className="absolute bottom-3 right-3 p-3 bg-red-500/70 hover:bg-red-600 rounded-full text-white transition-all backdrop-blur-sm"
+                  className="absolute top-3 left-3 p-3 bg-red-500/70 hover:bg-red-600 rounded-full text-white transition-all backdrop-blur-sm"
                   onClick={() => handleDelete(selectedPhoto)}
                 >
                   <Trash2 size={22} />
