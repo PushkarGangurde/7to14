@@ -12,13 +12,6 @@ const TANU_BIRTH_DATE = new Date(2005, 4, 14);
 export default function TanuPage() {
   return (
     <div className="min-h-screen bg-black py-12 px-4 relative overflow-hidden">
-      {/* Background Image Poster */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-80"
-        style={{ backgroundImage: 'url("/images/tanu-bg.jpg")' }}
-      />
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-black via-black/20 to-black" />
-
       <div className="relative z-10">
         <svg width="0" height="0">
         <defs>
@@ -69,6 +62,7 @@ export default function TanuPage() {
             enableTilt={false}
             enableMagnetism={false}
             enableStars={false}
+            backgroundImage="/images/tanu-bg.jpg"
           >
             <ProfileCard
               name="Tanu"
