@@ -10,6 +10,7 @@ import { getPhotos } from '@/lib/supabase';
 import { Aurora } from '@/components/Aurora';
 import { JourneySection } from '@/components/JourneySection';
 import FlowingMenu from '@/components/FlowingMenu';
+import { TextType } from '@/components/TextType';
 
 const START_DATE = new Date(2020, 0, 7); // Jan 7, 2020
 
@@ -106,7 +107,14 @@ export default function HomePage() {
             className="flex flex-col items-center text-center space-y-4"
           >
             <h1 className="text-6xl md:text-8xl font-sans text-white tracking-tighter">
-              <span className="block text-slate-400 text-2xl md:text-3xl tracking-[0.2em] uppercase mb-2 opacity-50">Welcome to</span>
+              <TextType 
+                text={["Welcome to"]}
+                typingSpeed={75}
+                pauseDuration={3000}
+                showCursor={true}
+                cursorCharacter="|"
+                className="block text-slate-400 text-2xl md:text-3xl tracking-[0.2em] uppercase mb-2 opacity-50"
+              />
               7to14
             </h1>
             
