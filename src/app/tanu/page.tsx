@@ -14,7 +14,7 @@ export default function TanuPage() {
     <div className="min-h-screen bg-black py-12 px-4 relative overflow-hidden">
       {/* Background Image Poster */}
       <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-50"
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-80"
         style={{ backgroundImage: 'url("/images/tanu-bg.jpg")' }}
       />
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-black via-black/20 to-black" />
