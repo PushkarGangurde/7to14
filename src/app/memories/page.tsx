@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { InfiniteMenu, MenuItem } from '@/components/InfiniteMenu';
+import { AuroraHearts } from '@/components/AuroraHearts';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -187,6 +188,7 @@ export default function MemoriesPage() {
 
   return (
     <div className="fixed inset-0 bg-black overflow-hidden select-none">
+      <AuroraHearts />
       {/* Infinite Gallery */}
       <div className="absolute inset-0 w-full h-full">
         {loading ? (
