@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Heart, Cake, Music, Utensils, MapPin, Film, Car, CloudSun } from 'lucide-react';
+import { Heart, Cake, Music, Utensils, Film, Car, CloudSun } from 'lucide-react';
 import RotatingText from '@/components/RotatingText';
 import MagicBento, { BentoCard } from '@/components/MagicBento';
 import ProfileCard from '@/components/ProfileCard';
@@ -93,10 +93,18 @@ export default function TanuPage() {
           <BentoCard className="lg:col-span-2 p-6 min-h-[140px] flex flex-col justify-between">
             <div className="flex items-center gap-2 text-white/60 text-sm">
               <Music size={16} stroke="url(#aurora-gradient)" />
-              <span>Our Song</span>
+              <span>Fav Song</span>
             </div>
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-white/70 text-center">Spotify embed placeholder</p>
+            <div className="flex-1 flex items-center justify-center overflow-hidden rounded-xl">
+              <iframe
+                style={{ borderRadius: '12px' }}
+                src="https://open.spotify.com/embed/track/1KaNtSpU12ZFyTPc07gTht?utm_source=generator&theme=0"
+                width="100%"
+                height="152"
+                frameBorder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+              />
             </div>
           </BentoCard>
 
@@ -120,19 +128,6 @@ export default function TanuPage() {
             <div className="flex items-center gap-2 text-white/80 text-sm">
               <CloudSun size={16} />
               <span>Favorite Weather</span>
-            </div>
-            <div className="mt-auto">
-              <p className="text-white font-semibold">Coming Soon</p>
-            </div>
-          </BentoCard>
-
-          <BentoCard 
-            className="p-6 min-h-[180px] flex flex-col justify-between"
-            backgroundImage="/placeholder-travel.jpg"
-          >
-            <div className="flex items-center gap-2 text-white/80 text-sm">
-              <MapPin size={16} />
-              <span>Favorite Travel</span>
             </div>
             <div className="mt-auto">
               <p className="text-white font-semibold">Coming Soon</p>
