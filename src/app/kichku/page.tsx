@@ -109,8 +109,8 @@ export default function KichkuPage() {
           </BentoCard>
 
           <BentoCard 
-            className="p-6 min-h-[180px] flex flex-col justify-between"
-            backgroundImage="https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=2020&auto=format&fit=crop"
+            className="p-6 min-h-[180px] flex flex-col justify-between border-black/50"
+            backgroundImage="/images/biryani.jpg"
           >
             <div className="flex items-center gap-2 text-white/80 text-sm">
               <Utensils size={16} />
@@ -122,8 +122,8 @@ export default function KichkuPage() {
           </BentoCard>
 
           <BentoCard 
-            className="p-6 min-h-[180px] flex flex-col justify-between"
-            backgroundImage="https://images.unsplash.com/photo-1505672678657-cc7037095e60?q=80&w=2070&auto=format&fit=crop"
+            className="p-6 min-h-[180px] flex flex-col justify-between border-black/50"
+            backgroundImage="/images/breezy.jpg"
           >
             <div className="flex items-center gap-2 text-white/80 text-sm">
               <CloudSun size={16} />
@@ -135,8 +135,8 @@ export default function KichkuPage() {
           </BentoCard>
 
           <BentoCard 
-            className="p-6 min-h-[180px] flex flex-col justify-between"
-            backgroundImage="https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=1974&auto=format&fit=crop"
+            className="p-6 min-h-[180px] flex flex-col justify-between border-black/50"
+            backgroundImage="/images/iron man.jpg"
           >
             <div className="flex items-center gap-2 text-white/80 text-sm">
               <Film size={16} />
@@ -148,8 +148,8 @@ export default function KichkuPage() {
           </BentoCard>
 
           <BentoCard 
-            className="p-6 min-h-[180px] flex flex-col justify-between"
-            backgroundImage="https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=2070&auto=format&fit=crop"
+            className="p-6 min-h-[180px] flex flex-col justify-between border-black/50"
+            backgroundImage="/images/bmw m3.jpg"
           >
             <div className="flex items-center gap-2 text-white/80 text-sm">
               <Car size={16} />

@@ -109,8 +109,8 @@ export default function TanuPage() {
           </BentoCard>
 
           <BentoCard 
-            className="p-6 min-h-[180px] flex flex-col justify-between"
-            backgroundImage="https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?q=80&w=2020&auto=format&fit=crop"
+            className="p-6 min-h-[180px] flex flex-col justify-between border-black/50"
+            backgroundImage="/images/biryani.jpg"
           >
             <div className="flex items-center gap-2 text-white/80 text-sm">
               <Utensils size={16} />
@@ -122,8 +122,8 @@ export default function TanuPage() {
           </BentoCard>
 
           <BentoCard 
-            className="p-6 min-h-[180px] flex flex-col justify-between"
-            backgroundImage="https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=1951&auto=format&fit=crop"
+            className="p-6 min-h-[180px] flex flex-col justify-between border-black/50"
+            backgroundImage="/images/dark cloudy.jpg"
           >
             <div className="flex items-center gap-2 text-white/80 text-sm">
               <CloudSun size={16} />
@@ -135,8 +135,8 @@ export default function TanuPage() {
           </BentoCard>
 
           <BentoCard 
-            className="p-6 min-h-[180px] flex flex-col justify-between"
-            backgroundImage="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=1974&auto=format&fit=crop"
+            className="p-6 min-h-[180px] flex flex-col justify-between border-black/50"
+            backgroundImage="/images/vivah.jpg"
           >
             <div className="flex items-center gap-2 text-white/80 text-sm">
               <Film size={16} />
@@ -148,8 +148,8 @@ export default function TanuPage() {
           </BentoCard>
 
           <BentoCard 
-            className="p-6 min-h-[180px] flex flex-col justify-between"
-            backgroundImage="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070&auto=format&fit=crop"
+            className="p-6 min-h-[180px] flex flex-col justify-between border-black/50"
+            backgroundImage="/images/porce 911.jpg"
           >
             <div className="flex items-center gap-2 text-white/80 text-sm">
               <Car size={16} />
