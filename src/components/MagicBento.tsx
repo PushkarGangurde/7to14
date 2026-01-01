@@ -319,7 +319,7 @@ export const BentoCard: React.FC<{
     position: 'relative',
     overflow: 'hidden',
     ...(backgroundImage && {
-      backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url(${backgroundImage})`,
+      backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5)), url(${backgroundImage})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center'
     })
