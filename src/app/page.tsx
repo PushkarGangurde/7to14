@@ -106,17 +106,20 @@ export default function HomePage() {
             transition={{ duration: 1, ease: "easeOut" }}
             className="flex flex-col items-center text-center space-y-4"
           >
-            <h1 className="text-6xl md:text-8xl font-sans text-white tracking-tighter">
+            <div className="flex flex-col items-center">
               <TextType 
                 text={["Welcome to"]}
                 typingSpeed={75}
                 pauseDuration={3000}
                 showCursor={true}
                 cursorCharacter="|"
-                className="block text-slate-400 text-2xl md:text-3xl tracking-[0.2em] uppercase mb-2 opacity-50"
+                loop={false}
+                className="text-slate-400 text-2xl md:text-3xl tracking-[0.2em] uppercase mb-4 opacity-50"
               />
-              7to14
-            </h1>
+              <h1 className="text-6xl md:text-8xl font-sans text-white tracking-tighter">
+                7to14
+              </h1>
+            </div>
             
             <p className="max-w-md text-slate-400 text-sm md:text-base font-light tracking-wide leading-relaxed">
               A digital archive of our journey, capturing every heartbeat and shared memory since the very beginning.
