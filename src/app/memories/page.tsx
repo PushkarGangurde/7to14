@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Image as ImageIcon, X, Upload, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/Loader';
@@ -179,6 +179,12 @@ export default function MemoriesPage() {
       }))
     : tempItems, [photos]);
 
+  const handleItemDoubleClick = useCallback((index: number) => {
+    if (photos.length > 0) {
+      setSelectedPhoto(photos[index]);
+    }
+  }, [photos]);
+
   return (
     <div className="fixed inset-0 bg-black overflow-hidden select-none">
       {/* Infinite Gallery */}
@@ -191,11 +197,7 @@ export default function MemoriesPage() {
           <InfiniteMenu 
             items={menuItems} 
             scale={2} 
-            onItemDoubleClick={(index) => {
-              if (photos.length > 0) {
-                setSelectedPhoto(photos[index]);
-              }
-            }}
+            onItemDoubleClick={handleItemDoubleClick}
           />
         )}
       </div>

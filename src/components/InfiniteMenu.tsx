@@ -1140,7 +1140,7 @@ export function InfiniteMenu({ items = [], scale = 1.0, onItemDoubleClick }: Inf
         clearTimeout(timer);
       };
     }
-  }, [items, scale, onItemDoubleClick]);
+    }, [items, scale]);
 
   return (
     <div className="relative w-full h-full">
