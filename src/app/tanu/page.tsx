@@ -188,10 +188,10 @@ export default function TanuPage() {
               href="https://aarohibachhav.nicepage.io/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="mt-2 inline-flex items-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-[#14e818] via-[#017ed5] to-[#b53dff] text-black font-bold hover:shadow-[0_0_20px_rgba(1,126,213,0.4)] transition-all hover:scale-105 active:scale-95 group"
+              className="mt-2 text-white/60 hover:text-white transition-colors flex items-center gap-2 group"
             >
-              <span className="text-sm">aarohibachhav.nicepage.io</span>
-              <ExternalLink size={14} />
+              <span className="text-sm underline underline-offset-4 decoration-white/20 group-hover:decoration-white transition-all italic">aarohibachhav.nicepage.io</span>
+              <ExternalLink size={14} className="opacity-50 group-hover:opacity-100 transition-opacity" />
             </a>
           </BentoCard>
         </div>
