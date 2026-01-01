@@ -168,7 +168,7 @@ export default function TanuPage() {
             <div className="flex-1 flex flex-col md:flex-row items-center gap-6">
               <div className="flex-1">
                 <p className="text-white/80 text-lg italic leading-relaxed">
-                  "A heartfelt note from your partner will appear here..."
+                  "To my high school sweetheart, you are stunning. I am profoundly lucky to have found my lifelong partner in you, and I look forward to weathering every one of life's storms and celebrating every triumph by your side. You are my world and my gorgeous queen; I am so deeply grateful for you."
                 </p>
                 <p className="text-white/40 text-sm mt-4">- From Kichku</p>
               </div>
