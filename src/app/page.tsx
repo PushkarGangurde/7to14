@@ -121,11 +121,8 @@ export default function HomePage() {
               <DecryptedText
                 text="7to14"
                 animateOn="view"
-                revealDirection="center"
-                sequential={false}
-                speed={20}
-                maxIterations={150}
-                initialDelay={0}
+                speed={30}
+                totalDuration={3000}
                 className="text-white"
                 encryptedClassName="text-white/30"
                 parentClassName="text-6xl md:text-8xl font-sans tracking-tighter"
