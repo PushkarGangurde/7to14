@@ -318,11 +318,11 @@ export const BentoCard: React.FC<{
     ...style,
     position: 'relative',
     overflow: 'hidden',
-    ...(backgroundImage && {
-      backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4)), url(${backgroundImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'
-    })
+...(backgroundImage && {
+        backgroundImage: `radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.7) 100%), url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      })
   };
 
   return (
