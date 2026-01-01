@@ -867,29 +867,19 @@ class InfiniteGridMenu {
             img.src = item.image;
           })
       )
-      ).then(images => {
-        images.forEach((img, i) => {
-          const x = (i % this.atlasSize) * cellSize;
-          const y = Math.floor(i / this.atlasSize) * cellSize;
-          
-          // Calculate cover dimensions to maintain aspect ratio
-          const imgRatio = img.width / img.height;
-          let sx, sy, sw, sh;
-          
-          if (imgRatio > 1) { // Landscape
-            sh = img.height;
-            sw = img.height;
-            sx = (img.width - sw) / 2;
-            sy = 0;
-          } else { // Portrait
-            sw = img.width;
-            sh = img.width;
-            sx = 0;
-            sy = (img.height - sh) / 2;
-          }
-          
-          ctx.drawImage(img, sx, sy, sw, sh, x, y, cellSize, cellSize);
-        });
+        ).then(images => {
+          images.forEach((img, i) => {
+            const x = (i % this.atlasSize) * cellSize;
+            const y = Math.floor(i / this.atlasSize) * cellSize;
+            
+            const imgW = img.width;
+            const imgH = img.height;
+            const cropSize = Math.min(imgW, imgH);
+            const sx = (imgW - cropSize) / 2;
+            const sy = (imgH - cropSize) / 2;
+            
+            ctx.drawImage(img, sx, sy, cropSize, cropSize, x, y, cellSize, cellSize);
+          });
 
         gl.bindTexture(gl.TEXTURE_2D, this.tex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
