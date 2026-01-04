@@ -16,14 +16,6 @@ The goal of this project is to provide a personal and private space where a coup
 - **Store and revisit** shared memories.
 - **Maintain a structured, organized gallery** that grows over time.
 
-## Gallery
-
-| Home Page | Memories Gallery | Kichku's Den |
-|:---:|:---:|:---:|
-| ![Home Page](./public/screenshots/home-placeholder.png) | ![Gallery](./public/screenshots/gallery-placeholder.png) | ![Kichku](./public/screenshots/kichku-placeholder.png) |
-
-> *Note: Place your screenshots in `public/screenshots` folder.*
-
 ## Website Structure
 
 ### Project Tree
